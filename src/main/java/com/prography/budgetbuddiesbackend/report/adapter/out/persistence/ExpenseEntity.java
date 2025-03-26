@@ -2,7 +2,8 @@ package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
+import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,13 +20,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "expense")
 @Getter
-public class ExpenseEntity {
+public class ExpenseEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private Long amount;
+	private int amount;
 
 	private String description;
 

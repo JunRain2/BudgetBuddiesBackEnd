@@ -1,5 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
+import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "consumption_goal")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ConsumptionGoalEntity {
+public class ConsumptionGoalEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
