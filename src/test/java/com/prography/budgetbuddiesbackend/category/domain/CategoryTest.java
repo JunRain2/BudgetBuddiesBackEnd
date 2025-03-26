@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 class CategoryTest {
 	@Test
 	void 기본_카테고리_변경불가() {
-		Category category = Category.of(-1L, -1L, "TEST", false);
+		Category category = Category.of(-1L, -1L, 200000L, "TEST", false);
 
 		assertThat(category.canModify(2L)).isFalse();
 	}
 
 	@Test
 	void 사용자가_일치하지_않아_변경불가() {
-		Category category = Category.of(-1L, null, "TEST", true);
+		Category category = Category.of(-1L, null, 200000L, "TEST", true);
 
 		assertThat(category.canModify(2L)).isFalse();
 	}
