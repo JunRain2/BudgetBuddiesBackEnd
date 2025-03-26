@@ -7,5 +7,5 @@ import com.prography.budgetbuddiesbackend.report.domain.Category;
 public interface FindCategoryPort {
 	List<Category> findUserAndDefaultCategory(Long userId);
 
-	Category findCategory(Long userId, Long categoryId);
+	Category findUserCategory(Long userId, Long categoryId);
 }

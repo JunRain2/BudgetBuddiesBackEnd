@@ -2,6 +2,9 @@ package com.prography.budgetbuddiesbackend.report.application;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.prography.budgetbuddiesbackend.report.adapter.in.UserCategoryListResponse;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.CategoryUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.DeleteCategoryCommand;
@@ -16,6 +19,8 @@ import com.prography.budgetbuddiesbackend.report.domain.Category;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryService implements CategoryUseCase {
 	private final FindCategoryPort findCategoryPort;
@@ -48,7 +53,7 @@ public class CategoryService implements CategoryUseCase {
 
 	@Override
 	public void deleteCategory(DeleteCategoryCommand command) {
-		Category category = findCategoryPort.findCategory(command.userId(), command.categoryId());
+		Category category = findCategoryPort.findUserCategory(command.userId(), command.categoryId());
 		deleteCategoryPort.deleteCategory(category);
 	}
 }
