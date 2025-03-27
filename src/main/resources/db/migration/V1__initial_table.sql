@@ -16,6 +16,20 @@ CREATE TABLE category
     FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
+CREATE TABLE expense
+(
+    id          BIGINT PRIMARY KEY,
+    user_id     BIGINT      NOT NULL,
+    category_id BIGINT,
+    amount      INT         NOT NULL,
+    description VARCHAR(30) NOT NULL,
+    expense_at  DATE        NOT NULL,
+    created_at  TIMESTAMP   NOT NULL,
+    updated_at  TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE SET NULL
+);
+
 CREATE TABLE consumption_goal
 (
     id          BIGINT PRIMARY KEY,
@@ -28,16 +42,15 @@ CREATE TABLE consumption_goal
     FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE
 );
 
-CREATE TABLE expense
+CREATE TABLE previous_consumption_goal
 (
-    id          BIGINT PRIMARY KEY,
-    user_id     BIGINT      NOT NULL,
-    category_id BIGINT,
-    amount      INT         NOT NULL,
-    description VARCHAR(30) NOT NULL,
-    expense_at   DATE   NOT NULL,
-    created_at  TIMESTAMP   NOT NULL,
-    updated_at  TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user (id),
-    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE SET NULL
+    id            BIGINT PRIMARY KEY,
+    user_id       BIGINT      NOT NULL,
+    category_name VARCHAR(30) NOT NULL,
+    cap           INT         NOT NULL,
+    consumption   INT         NOT NULL,
+    goal_at        DATE        NOT NULL,
+    created_at    TIMESTAMP   NOT NULL,
+    updated_at    TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (id)
 );
