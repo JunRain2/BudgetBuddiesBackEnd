@@ -1,8 +1,5 @@
 package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -15,12 +12,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 public class CategoryEntity extends BaseEntity {
 	@Id
@@ -30,16 +29,11 @@ public class CategoryEntity extends BaseEntity {
 	@Column(nullable = false)
 	private String name;
 
+	private int cap;
+
 	private Boolean isDefault;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "user_id")
 	private UserEntity user;
-
-	public CategoryEntity(String name, Boolean isDefault, UserEntity user) {
-		this.name = name;
-		this.isDefault = isDefault;
-		this.user = user;
-	}
 }

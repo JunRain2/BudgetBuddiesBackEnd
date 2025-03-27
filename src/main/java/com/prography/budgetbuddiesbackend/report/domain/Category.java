@@ -24,6 +24,6 @@ public class Category {
 		LocalDate now = LocalDate.now();
 		now = now.withDayOfMonth(1);
 
-		return new ConsumptionGoal(null, categoryId, now, new Money(DEFAULT_CAP), new Money(0));
+		return new ConsumptionGoal(categoryId, name, now, new Money(DEFAULT_CAP), new Money(0));
 	}
 }

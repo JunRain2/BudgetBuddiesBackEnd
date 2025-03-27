@@ -10,6 +10,7 @@ CREATE TABLE category
     id         BIGINT PRIMARY KEY,
     user_id    BIGINT,
     is_default BOOLEAN     NOT NULL,
+    cap         INT       NOT NULL,
     created_at TIMESTAMP   NOT NULL,
     updated_at TIMESTAMP,
     name       VARCHAR(20) NOT NULL,
@@ -28,18 +29,6 @@ CREATE TABLE expense
     updated_at  TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user (id),
     FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE SET NULL
-);
-
-CREATE TABLE consumption_goal
-(
-    id          BIGINT PRIMARY KEY,
-    user_id     BIGINT    NOT NULL,
-    category_id BIGINT    NOT NULL,
-    cap         INT       NOT NULL,
-    created_at  TIMESTAMP NOT NULL,
-    updated_at  TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user (id),
-    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE
 );
 
 CREATE TABLE previous_consumption_goal

@@ -25,7 +25,7 @@ class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPo
 	@Override
 	public Category createCategory(CreateCategoryCommand command) {
 		UserEntity userEntity = userRepository.findById(command.userId()).orElseThrow(NotFoundUserException::new);
-		CategoryEntity categoryEntity = new CategoryEntity(command.name(), false, userEntity);
+		CategoryEntity categoryEntity = mapper.createCategoryCommandToCategoryEntity(command, userEntity);
 		return mapper.categoryEntityToCategory(categoryRepository.save(categoryEntity));
 	}
 
