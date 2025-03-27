@@ -12,4 +12,6 @@ interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 	List<CategoryEntity> findByUserOrIsDefault(@Param("user") UserEntity user);
 
 	Optional<CategoryEntity> findByIdAndUser(Long id, UserEntity user);
+
+	List<CategoryEntity> findAllByUser(UserEntity user);
 }
