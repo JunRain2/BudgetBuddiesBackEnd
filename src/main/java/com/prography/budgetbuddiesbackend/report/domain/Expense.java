@@ -2,6 +2,8 @@ package com.prography.budgetbuddiesbackend.report.domain;
 
 import java.time.LocalDate;
 
+import com.prography.budgetbuddiesbackend.common.vo.Money;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,13 +11,13 @@ import lombok.Getter;
 @Getter
 public class Expense {
 	private Long expenseId;
+	private Long categoryId;
 	private String description;
-	private Category category;
 	private Money spendingMoney;
 	private LocalDate expenseAt;
 
-	public void changeCategory(Category category) {
-		this.category = category;
+	public void changeCategory(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	public void modifyExpenseAt(LocalDate localDate) {

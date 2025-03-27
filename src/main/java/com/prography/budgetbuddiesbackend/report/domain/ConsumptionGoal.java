@@ -2,24 +2,20 @@ package com.prography.budgetbuddiesbackend.report.domain;
 
 import java.time.LocalDate;
 
-import lombok.AccessLevel;
+import com.prography.budgetbuddiesbackend.common.vo.Money;
+import com.prography.budgetbuddiesbackend.report.domain.exception.NotModifyConsumptionGoal;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Getter
 public class ConsumptionGoal {
 	private Long consumptionGoalId;
-	private Category category;
+	private Long categoryId;
 	private LocalDate goalAt;
 	private Money cap;
 	private Money spendingMoney;
-
-	public static ConsumptionGoal of(Long consumptionGoalId, Category category, LocalDate goalAt, Money cap,
-		Money spendingMoney) {
-		goalAt = goalAt.withDayOfMonth(1);
-		return new ConsumptionGoal(consumptionGoalId, category, goalAt, cap, spendingMoney);
-	}
 
 	public void modifyCap(int cap) {
 		checkThisMont();

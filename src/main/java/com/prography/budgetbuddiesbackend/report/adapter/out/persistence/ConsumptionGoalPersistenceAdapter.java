@@ -2,10 +2,10 @@ package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
 import org.springframework.stereotype.Repository;
 
-import com.prography.budgetbuddiesbackend.report.adapter.out.NotFoundCategoryException;
-import com.prography.budgetbuddiesbackend.report.adapter.out.NotFoundUserException;
-import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.CreateConsumptionGoalCommand;
+import com.prography.budgetbuddiesbackend.report.adapter.out.persistence.exception.NotFoundCategoryException;
+import com.prography.budgetbuddiesbackend.report.adapter.out.persistence.exception.NotFoundUserException;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.CreateConsumptionGoalPort;
+import com.prography.budgetbuddiesbackend.report.domain.ConsumptionGoal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,12 +19,12 @@ public class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalP
 	private final ConsumptionGoalMapper mapper;
 
 	@Override
-	public void createConsumptionGoal(CreateConsumptionGoalCommand command) {
-		CategoryEntity categoryEntity = categoryRepository.findById(command.categoryId()).orElseThrow(
+	public void createConsumptionGoal(Long userId, ConsumptionGoal consumptionGoal) {
+		CategoryEntity categoryEntity = categoryRepository.findById(consumptionGoal.getCategoryId()).orElseThrow(
 			NotFoundCategoryException::new);
-		UserEntity userEntity = userRepository.findById(command.userId()).orElseThrow(NotFoundUserException::new);
+		UserEntity userEntity = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
 
-		ConsumptionGoalEntity consumptionGoalEntity = new ConsumptionGoalEntity(command.cap(), userEntity,
-			categoryEntity);
+		ConsumptionGoalEntity consumptionGoalEntity = mapper.consumptionGoalToConsumptionGoalEntity(consumptionGoal,
+			userEntity, categoryEntity);
 	}
 }

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.prography.budgetbuddiesbackend.report.adapter.out.NotFoundCategoryException;
-import com.prography.budgetbuddiesbackend.report.adapter.out.NotFoundUserException;
+import com.prography.budgetbuddiesbackend.report.adapter.out.persistence.exception.NotFoundCategoryException;
+import com.prography.budgetbuddiesbackend.report.adapter.out.persistence.exception.NotFoundUserException;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.DeleteCategoryPort;

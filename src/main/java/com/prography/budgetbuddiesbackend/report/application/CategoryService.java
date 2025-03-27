@@ -13,9 +13,9 @@ import com.prography.budgetbuddiesbackend.report.application.port.out.category.C
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.DeleteCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.FindCategoryPort;
-import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.CreateConsumptionGoalCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.CreateConsumptionGoalPort;
 import com.prography.budgetbuddiesbackend.report.domain.Category;
+import com.prography.budgetbuddiesbackend.report.domain.ConsumptionGoal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,15 +40,8 @@ public class CategoryService implements CategoryUseCase {
 		CreateCategoryCommand createCommand = new CreateCategoryCommand(command.userId(), command.categoryName());
 		Category category = createCategoryPort.createCategory(createCommand);
 
-		createConsumptionGoal(command, category);
-	}
-
-	private void createConsumptionGoal(RegisterCategoryCommand command, Category category) {
-		final int DEFAULT_CAP = 200000;
-
-		CreateConsumptionGoalCommand consumptionGoalCommand = new CreateConsumptionGoalCommand(command.userId(),
-			category.getCategoryId(), DEFAULT_CAP);
-		createConsumptionGoalPort.createConsumptionGoal(consumptionGoalCommand);
+		ConsumptionGoal consumptionGoal = category.createConsumptionGoal();
+		createConsumptionGoalPort.createConsumptionGoal(command.userId(), consumptionGoal);
 	}
 
 	@Override
