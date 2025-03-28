@@ -34,4 +34,8 @@ public class CategoryEntity extends BaseEntity {
 	private Boolean isDefault;
 
 	private Long userId;
+
+	public void modifyCap(int cap) {
+		this.cap = cap;
+	}
 }

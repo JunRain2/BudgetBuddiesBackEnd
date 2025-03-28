@@ -5,5 +5,5 @@ import java.util.List;
 import com.prography.budgetbuddiesbackend.report.domain.ConsumptionGoal;
 
 public interface UpdateConsumptionGoalPort {
-	void updateConsumptionGoalList(List<ConsumptionGoal> consumptionGoalList);
+	void updateConsumptionGoalListCap(List<ConsumptionGoal> consumptionGoalList);
 }

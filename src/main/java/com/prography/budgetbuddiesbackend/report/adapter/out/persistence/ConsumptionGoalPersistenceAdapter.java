@@ -2,18 +2,23 @@ package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
+import com.prography.budgetbuddiesbackend.report.adapter.out.persistence.exception.NotFoundCategoryException;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.CreateConsumptionGoalPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.FindConsumptionGoalPort;
+import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.UpdateConsumptionGoalPort;
 import com.prography.budgetbuddiesbackend.report.domain.ConsumptionGoal;
 
 import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, FindConsumptionGoalPort {
+public class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, FindConsumptionGoalPort,
+	UpdateConsumptionGoalPort {
 
 	private final CategoryRepository categoryRepository;
 	private final ExpenseRepository expenseRepository;
@@ -49,8 +54,7 @@ public class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalP
 		}).toList();
 	}
 
-	private List<ConsumptionGoal> getConsumptionGoalsByPreviousConsumptionGoalEntity(LocalDate now,
-		Long userId) {
+	private List<ConsumptionGoal> getConsumptionGoalsByPreviousConsumptionGoalEntity(LocalDate now, Long userId) {
 		List<PreviousConsumptionGoalEntity> previousConsumptionGoalEntityList = previousConsumptionGoalRepository.findByGoalAtAndUserId(
 			now, userId);
 
@@ -59,14 +63,28 @@ public class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalP
 			.toList();
 	}
 
-
 	@Override
-	public List<ConsumptionGoal> findThisMonthUserConsumptionGoalMap(Long userId, List<Long> consumptionGoalIdList) {
-		LocalDate now = LocalDate.now();
-		now = now.withDayOfMonth(1);
-		// TODO 구현하기
+	public Map<Long, ConsumptionGoal> findThisMonthUserConsumptionGoalMap(Long userId,
+		List<Long> consumptionGoalIdList) {
 
-		return List.of();
+		List<CategoryEntity> categoryEntityList = categoryRepository.findALlByUserIdAndIdIn(userId,
+			consumptionGoalIdList);
+
+		return categoryEntityList.stream()
+			.collect(Collectors.toMap(CategoryEntity::getId,
+				c -> mapper.categoryEntityToConsumptionGoal(c,
+					expenseRepository.sumAmountByExpenseAtAndCategory(LocalDate.now(), c.getId()))));
 	}
 
+	@Override
+	public void updateConsumptionGoalListCap(List<ConsumptionGoal> consumptionGoalList) {
+		for (ConsumptionGoal consumptionGoal : consumptionGoalList) {
+			CategoryEntity categoryEntity = categoryRepository.findById(consumptionGoal.getConsumptionGoalId())
+				.orElseThrow(
+					NotFoundCategoryException::new);
+
+			categoryEntity.modifyCap(consumptionGoal.getCap().value());
+			categoryRepository.save(categoryEntity);
+		}
+	}
 }

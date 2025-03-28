@@ -1,5 +1,6 @@
 package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 	Optional<CategoryEntity> findByIdAndUserId(Long id, Long userId);
 
 	List<CategoryEntity> findAllByUserId(Long userId);
+
+	List<CategoryEntity> findALlByUserIdAndIdIn(Long userId, Collection<Long> categoryId);
 }
