@@ -11,7 +11,7 @@ class CategoryMapper {
 		return new Category(categoryEntity.getId(), categoryEntity.getName(), categoryEntity.getIsDefault());
 	}
 
-	public CategoryEntity createCategoryCommandToCategoryEntity(CreateCategoryCommand command, UserEntity userEntity) {
-		return new CategoryEntity(null, command.name(), 0, false, userEntity);
+	public CategoryEntity createCategoryCommandToCategoryEntity(CreateCategoryCommand command) {
+		return new CategoryEntity(null, command.name(), 0, false, command.userId());
 	}
 }

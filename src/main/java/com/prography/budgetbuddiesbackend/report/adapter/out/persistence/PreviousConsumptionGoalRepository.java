@@ -6,5 +6,5 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 interface PreviousConsumptionGoalRepository extends JpaRepository<PreviousConsumptionGoalEntity, Long> {
-	List<PreviousConsumptionGoalEntity> findByGoalAtAndUser(LocalDate goalAt, UserEntity user);
+	List<PreviousConsumptionGoalEntity> findByGoalAtAndUserId(LocalDate goalAt, Long userId);
 }

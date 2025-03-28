@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
-	@Query("SELECT a FROM CategoryEntity a WHERE a.user = :user OR a.isDefault = true")
-	List<CategoryEntity> findByUserOrIsDefault(@Param("user") UserEntity user);
+	@Query("SELECT a FROM CategoryEntity a WHERE a.userId = :userId OR a.isDefault = true")
+	List<CategoryEntity> findByUserIdOrIsDefault(@Param("userId") Long userId);
 
-	Optional<CategoryEntity> findByIdAndUser(Long id, UserEntity user);
+	Optional<CategoryEntity> findByIdAndUserId(Long id, Long userId);
 
-	List<CategoryEntity> findAllByUser(UserEntity user);
+	List<CategoryEntity> findAllByUserId(Long userId);
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.prography.budgetbuddiesbackend.report.adapter.out.persistence.exception.NotFoundCategoryException;
-import com.prography.budgetbuddiesbackend.report.adapter.out.persistence.exception.NotFoundUserException;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.DeleteCategoryPort;
@@ -24,8 +23,7 @@ class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPo
 
 	@Override
 	public Category createCategory(CreateCategoryCommand command) {
-		UserEntity userEntity = userRepository.findById(command.userId()).orElseThrow(NotFoundUserException::new);
-		CategoryEntity categoryEntity = mapper.createCategoryCommandToCategoryEntity(command, userEntity);
+		CategoryEntity categoryEntity = mapper.createCategoryCommandToCategoryEntity(command);
 		return mapper.categoryEntityToCategory(categoryRepository.save(categoryEntity));
 	}
 
@@ -36,16 +34,14 @@ class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPo
 
 	@Override
 	public List<Category> findUserAndDefaultCategory(Long userId) {
-		UserEntity userEntity = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
-		List<CategoryEntity> categoryEntityList = categoryRepository.findByUserOrIsDefault(userEntity);
+		List<CategoryEntity> categoryEntityList = categoryRepository.findByUserIdOrIsDefault(userId);
 
 		return categoryEntityList.stream().map(mapper::categoryEntityToCategory).toList();
 	}
 
 	@Override
 	public Category findUserCategory(Long userId, Long categoryId) {
-		UserEntity userEntity = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
-		CategoryEntity categoryEntity = categoryRepository.findByIdAndUser(categoryId, userEntity)
+		CategoryEntity categoryEntity = categoryRepository.findByIdAndUserId(categoryId, userId)
 			.orElseThrow(NotFoundCategoryException::new);
 
 		return mapper.categoryEntityToCategory(categoryEntity);

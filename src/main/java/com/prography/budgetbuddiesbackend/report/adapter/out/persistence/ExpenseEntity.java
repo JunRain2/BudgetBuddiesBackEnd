@@ -31,11 +31,7 @@ public class ExpenseEntity extends BaseEntity {
 
 	private LocalDate expenseAt;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private UserEntity user;
+	private Long userId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id")
-	private CategoryEntity category;
+	private Long categoryId;
 }

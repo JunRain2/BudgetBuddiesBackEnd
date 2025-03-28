@@ -23,8 +23,8 @@ public class ConsumptionGoalMapper {
 			new Money(pcge.getConsumption()));
 	}
 
-	public CategoryEntity consumptionGoalToCategoryEntity(UserEntity user, ConsumptionGoal consumptionGoal) {
+	public CategoryEntity consumptionGoalToCategoryEntity(Long userId, ConsumptionGoal consumptionGoal) {
 		return new CategoryEntity(null, consumptionGoal.getCategoryName(), consumptionGoal.getCap().value(), false,
-			user);
+			userId);
 	}
 }

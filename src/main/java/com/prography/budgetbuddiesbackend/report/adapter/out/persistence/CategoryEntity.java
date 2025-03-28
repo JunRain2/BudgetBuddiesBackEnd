@@ -33,7 +33,5 @@ public class CategoryEntity extends BaseEntity {
 
 	private Boolean isDefault;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private UserEntity user;
+	private Long userId;
 }
