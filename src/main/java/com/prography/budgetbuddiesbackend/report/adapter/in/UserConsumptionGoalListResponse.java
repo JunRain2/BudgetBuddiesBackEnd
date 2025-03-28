@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal;
+package com.prography.budgetbuddiesbackend.report.adapter.in;
 
 import java.time.LocalDate;
 import java.util.List;

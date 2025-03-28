@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPort, FindCategoryPort {
 
 	private final CategoryRepository categoryRepository;
-	private final UserRepository userRepository;
 	private final CategoryMapper mapper;
 
 	@Override

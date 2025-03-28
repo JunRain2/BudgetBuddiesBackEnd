@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, FindConsumptionGoalPort {
 
-	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
 	private final ExpenseRepository expenseRepository;
 	private final PreviousConsumptionGoalRepository previousConsumptionGoalRepository;
@@ -59,4 +58,15 @@ public class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalP
 			.map(mapper::previousConsumptionGoalEntityToConsumptionGoal)
 			.toList();
 	}
+
+
+	@Override
+	public List<ConsumptionGoal> findThisMonthUserConsumptionGoalMap(Long userId, List<Long> consumptionGoalIdList) {
+		LocalDate now = LocalDate.now();
+		now = now.withDayOfMonth(1);
+		// TODO 구현하기
+
+		return List.of();
+	}
+
 }
