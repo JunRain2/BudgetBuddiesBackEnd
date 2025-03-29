@@ -1,9 +1,9 @@
 package com.prography.budgetbuddiesbackend.report.application.port.in.category;
 
-import com.prography.budgetbuddiesbackend.report.adapter.in.UserCategoryListResponse;
+import java.util.List;
 
 public interface CategoryUseCase {
-	UserCategoryListResponse findUserCategoryList(Long userId);
+	List<FindUserCategoryResult> findUserCategoryList(Long userId);
 
 	void registerCategory(RegisterCategoryCommand command);
 

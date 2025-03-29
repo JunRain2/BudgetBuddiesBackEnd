@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prography.budgetbuddiesbackend.report.adapter.in.UserCategoryListResponse;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.CategoryUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.DeleteCategoryCommand;
+import com.prography.budgetbuddiesbackend.report.application.port.in.category.FindUserCategoryResult;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.RegisterCategoryCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryPort;
@@ -29,10 +29,12 @@ public class CategoryService implements CategoryUseCase {
 	private final CreateConsumptionGoalPort createConsumptionGoalPort;
 
 	@Override
-	public UserCategoryListResponse findUserCategoryList(Long userId) {
+	public List<FindUserCategoryResult> findUserCategoryList(Long userId) {
 		List<Category> categoryList = findCategoryPort.findUserAndDefaultCategory(userId);
+		List<FindUserCategoryResult> results = categoryList.stream().map(c ->
+			new FindUserCategoryResult(c.getCategoryId(), c.getName(), c.isDefault())).toList();
 
-		return new UserCategoryListResponse(categoryList);
+		return results;
 	}
 
 	@Override

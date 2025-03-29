@@ -1,5 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.adapter.in.web;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,7 @@ import com.prography.budgetbuddiesbackend.report.adapter.in.RegisterCategoryRequ
 import com.prography.budgetbuddiesbackend.report.adapter.in.UserCategoryListResponse;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.CategoryUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.DeleteCategoryCommand;
+import com.prography.budgetbuddiesbackend.report.application.port.in.category.FindUserCategoryResult;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.RegisterCategoryCommand;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +28,9 @@ class CategoryController {
 
 	@GetMapping("/{userId}")
 	ResponseEntity<UserCategoryListResponse> findUserCategoryList(@PathVariable("userId") Long userId) {
-		UserCategoryListResponse response = categoryUseCase.findUserCategoryList(userId);
-		return ResponseEntity.ok(response);
+		List<FindUserCategoryResult> results = categoryUseCase.findUserCategoryList(userId);
+
+		return ResponseEntity.ok(new UserCategoryListResponse(results));
 	}
 
 	@PostMapping("/{userId}")

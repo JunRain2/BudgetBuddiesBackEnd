@@ -6,8 +6,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.prography.budgetbuddiesbackend.report.adapter.in.UserConsumptionGoalListResponse;
-import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.ConsumptionGoalUseCase;
+import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.CommandConsumptionGoalUseCase;
+import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.QueryConsumptionGoalResult;
+import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.QueryConsumptionGoalUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.UpdateCapsCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.FindConsumptionGoalPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.UpdateConsumptionGoalPort;
@@ -17,16 +18,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ConsumptionGoalService implements ConsumptionGoalUseCase {
+public class ConsumptionGoalService implements QueryConsumptionGoalUseCase, CommandConsumptionGoalUseCase {
 	private final FindConsumptionGoalPort findConsumptionGoalPort;
-	private final UpdateConsumptionGoalPort updateConsumptioGoalPort;
+	private final UpdateConsumptionGoalPort updateConsumptionGoalPort;
 
 	@Override
-	public UserConsumptionGoalListResponse findMonthlyUserConsumptionGoal(LocalDate goalAt, Long userId) {
-		List<ConsumptionGoal> consumptionGoalList = findConsumptionGoalPort.findMonthlyUserConsumptionGoalList(goalAt,
-			userId);
-
-		return new UserConsumptionGoalListResponse(consumptionGoalList);
+	public List<QueryConsumptionGoalResult> findMonthlyUserConsumptionGoal(LocalDate goalAt, Long userId) {
+		return findConsumptionGoalPort.findMonthlyUserConsumptionGoalList(goalAt, userId);
 	}
 
 	@Override
@@ -47,6 +45,6 @@ public class ConsumptionGoalService implements ConsumptionGoalUseCase {
 			}
 		});
 
-		updateConsumptioGoalPort.updateConsumptionGoalListCap(goalMap.values().stream().toList());
+		updateConsumptionGoalPort.updateConsumptionGoalListCap(goalMap.values().stream().toList());
 	}
 }
