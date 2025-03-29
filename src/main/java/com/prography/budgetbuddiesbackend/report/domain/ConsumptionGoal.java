@@ -12,14 +12,9 @@ import lombok.Getter;
 @Getter
 public class ConsumptionGoal {
 	private Long consumptionGoalId;
-	private String categoryName;
+	private Long categoryId;
 	private LocalDate goalAt;
 	private Money cap;
-	private Money spendingMoney;
-
-	public int getResidualAmount() {
-		return this.cap.value() - this.spendingMoney.value();
-	}
 
 	public void modifyCap(int cap) {
 		checkThisMont();

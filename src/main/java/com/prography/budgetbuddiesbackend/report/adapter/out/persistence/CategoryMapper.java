@@ -7,11 +7,11 @@ import com.prography.budgetbuddiesbackend.report.domain.Category;
 
 @Component
 class CategoryMapper {
-	public Category categoryEntityToCategory(CategoryEntity categoryEntity) {
-		return new Category(categoryEntity.getId(), categoryEntity.getName(), categoryEntity.getIsDefault());
+	CategoryEntity createCategoryCommandToEntity(CreateCategoryCommand command) {
+		return new CategoryEntity(null, command.name(), false, command.userId());
 	}
 
-	public CategoryEntity createCategoryCommandToCategoryEntity(CreateCategoryCommand command) {
-		return new CategoryEntity(null, command.name(), 0, false, command.userId());
+	Category entityToCategory(CategoryEntity categoryEntity) {
+		return new Category(categoryEntity.getId(), categoryEntity.getName(), categoryEntity.getIsDefault());
 	}
 }
