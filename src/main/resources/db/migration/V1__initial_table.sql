@@ -1,13 +1,13 @@
 CREATE TABLE user
 (
-    id         BIGINT PRIMARY KEY,
+    id         BIGINT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
     update_at  TIMESTAMP
 );
 
 CREATE TABLE category
 (
-    id         BIGINT PRIMARY KEY,
+    id         BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id    BIGINT,
     is_default BOOLEAN     NOT NULL,
     created_at TIMESTAMP   NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE category
 
 CREATE TABLE consumption_goal
 (
-    id          BIGINT PRIMARY KEY,
+    id          BIGINT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id     BIGINT    NOT NULL,
     category_id BIGINT    NOT NULL,
     cap         INT       NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE consumption_goal
 
 CREATE TABLE expense
 (
-    id          BIGINT PRIMARY KEY,
+    id          BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id     BIGINT      NOT NULL,
     category_id BIGINT,
     amount      INT         NOT NULL,
