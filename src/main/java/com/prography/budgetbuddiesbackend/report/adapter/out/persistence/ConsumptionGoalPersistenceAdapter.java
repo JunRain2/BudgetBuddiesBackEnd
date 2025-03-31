@@ -3,6 +3,7 @@ package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +36,11 @@ class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, Fi
 	@Override
 	public Map<Long, ConsumptionGoal> findThisMonthUserConsumptionGoalMap(Long userId,
 		List<Long> consumptionGoalIdList) {
-		return Map.of();
+		List<ConsumptionGoalEntity> consumptionGoalEntities = consumptionGoalRepository.findAllByUserIdAndIdIn(userId,
+			consumptionGoalIdList);
+
+		return consumptionGoalEntities.stream().collect(
+			Collectors.toMap(ConsumptionGoalEntity::getId, mapper::entityToConsumptionGoal)
+		);
 	}
 }
