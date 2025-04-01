@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ConsumptionGoalRepository extends JpaRepository<ConsumptionGoalEntity, Long> {
 
 	List<ConsumptionGoalEntity> findAllByUserIdAndIdIn(Long userId, Collection<Long> ids);
+
+	List<ConsumptionGoalEntity> findAllByIdIn(List<Long> ids);
 }

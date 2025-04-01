@@ -3,6 +3,7 @@ package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
@@ -10,13 +11,15 @@ import org.springframework.stereotype.Repository;
 import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.QueryConsumptionGoalResult;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.CreateConsumptionGoalPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.FindConsumptionGoalPort;
+import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.UpdateConsumptionGoalPort;
 import com.prography.budgetbuddiesbackend.report.domain.ConsumptionGoal;
 
 import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, FindConsumptionGoalPort {
+class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, FindConsumptionGoalPort,
+	UpdateConsumptionGoalPort {
 
 	private final ConsumptionGoalRepository consumptionGoalRepository;
 	private final ConsumptionGoalQueryRepository queryConsumptionGoalRepository;
@@ -42,5 +45,23 @@ class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, Fi
 		return consumptionGoalEntities.stream().collect(
 			Collectors.toMap(ConsumptionGoalEntity::getId, mapper::entityToConsumptionGoal)
 		);
+	}
+
+	@Override
+	public void updateConsumptionGoalListCap(List<ConsumptionGoal> consumptionGoalList) {
+		Map<Long, ConsumptionGoal> consumptionGoalMap = consumptionGoalList.stream().collect(
+			Collectors.toMap(ConsumptionGoal::getConsumptionGoalId, Function.identity())
+		);
+
+		List<ConsumptionGoalEntity> consumptionGoalEntityList = consumptionGoalRepository.findAllByIdIn(
+			consumptionGoalMap.keySet().stream().toList());
+		consumptionGoalEntityList.forEach(
+			c -> {
+				ConsumptionGoal consumptionGoal = consumptionGoalMap.get(c.getId());
+				c.updateCap(c.getCap());
+			}
+		);
+
+		consumptionGoalRepository.saveAll(consumptionGoalEntityList);
 	}
 }

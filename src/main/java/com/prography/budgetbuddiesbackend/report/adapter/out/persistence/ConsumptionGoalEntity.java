@@ -33,5 +33,9 @@ class ConsumptionGoalEntity extends BaseEntity {
 	private int cap;
 
 	private LocalDate goalAt;
+
+	public void updateCap(int cap) {
+		this.cap = cap;
+	}
 }
 
