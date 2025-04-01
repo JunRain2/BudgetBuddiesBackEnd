@@ -8,7 +8,5 @@ import com.prography.budgetbuddiesbackend.report.domain.Expense;
 public interface FindExpensePort {
 	List<Expense> findMonthlyExpense(Long userId, LocalDate expenseMonth);
 
-	Expense findDetailExpenseResult(Long expenseId);
-
 	Expense findExpense(Long expenseId);
 }

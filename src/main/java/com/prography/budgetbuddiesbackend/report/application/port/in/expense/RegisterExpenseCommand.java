@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public record RegisterExpenseCommand(
 	int amount,
+	Long userId,
 	Long categoryId,
 	String description,
 	LocalDate expenseAt

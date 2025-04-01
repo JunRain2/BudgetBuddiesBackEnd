@@ -47,4 +47,12 @@ class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPo
 
 		return mapper.entityToCategory(categoryEntity);
 	}
+
+	@Override
+	public Category findCategory(Long categoryId) {
+		CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
+			.orElseThrow(NotFoundCategoryException::new);
+
+		return mapper.entityToCategory(categoryEntity);
+	}
 }

@@ -37,7 +37,7 @@ public class ExpenseService implements ExpenseUseCase {
 			new Money(command.amount()),
 			command.expenseAt());
 
-		registerExpensePort.registerExpense(expense);
+		registerExpensePort.registerExpense(command.userId(), expense);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class ExpenseService implements ExpenseUseCase {
 
 	@Override
 	public FindDetailExpenseResult findDetailExpenseResult(Long expenseId) {
-		Expense expense = findExpensePort.findDetailExpenseResult(expenseId);
+		Expense expense = findExpensePort.findExpense(expenseId);
 		Category category = findCategoryPort.findCategory(expense.getCategoryId());
 
 		return new FindDetailExpenseResult(
