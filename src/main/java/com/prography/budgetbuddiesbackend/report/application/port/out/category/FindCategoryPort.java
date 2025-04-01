@@ -8,4 +8,6 @@ public interface FindCategoryPort {
 	List<Category> findUserAndDefaultCategory(Long userId);
 
 	Category findUserCategory(Long userId, Long categoryId);
+
+	Category findCategory(Long categoryId);
 }

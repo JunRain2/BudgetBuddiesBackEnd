@@ -41,6 +41,7 @@ public class CategoryService implements CategoryUseCase {
 	public void registerCategory(RegisterCategoryCommand command) {
 		CreateCategoryCommand createCommand = new CreateCategoryCommand(command.userId(), command.categoryName());
 		Category category = createCategoryPort.createCategory(createCommand);
+		// TODO 이름에 중복이 없는지 확인
 
 		ConsumptionGoal consumptionGoal = category.createConsumptionGoal();
 		createConsumptionGoalPort.createConsumptionGoal(command.userId(), consumptionGoal);
