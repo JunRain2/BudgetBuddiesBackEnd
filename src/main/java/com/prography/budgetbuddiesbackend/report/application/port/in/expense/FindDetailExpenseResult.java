@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public record FindDetailExpenseResult(
 	Long expenseId,
 	String categoryName,
+	String description,
 	int amount,
 	LocalDate expenseAt
 ) {

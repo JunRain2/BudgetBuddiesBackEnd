@@ -62,6 +62,7 @@ class ExpenseService implements ExpenseUseCase {
 		return new FindDetailExpenseResult(
 			expense.getExpenseId(),
 			category.getName(),
+			expense.getDescription(),
 			expense.getSpendingMoney().value(),
 			expense.getExpenseAt());
 	}

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.prography.budgetbuddiesbackend.report.adapter.in.UpdateCapRequest;
 import com.prography.budgetbuddiesbackend.report.adapter.in.UserMonthlyConsumptionGoalListResponse;
 import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.CommandConsumptionGoalUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.QueryConsumptionGoalResult;

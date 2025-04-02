@@ -2,7 +2,7 @@ package com.prography.budgetbuddiesbackend.report.application.port.in.consumptio
 
 import java.util.List;
 
-import com.prography.budgetbuddiesbackend.report.adapter.in.web.UpdateCapRequest;
+import com.prography.budgetbuddiesbackend.report.adapter.in.UpdateCapRequest;
 
 import lombok.Getter;
 
