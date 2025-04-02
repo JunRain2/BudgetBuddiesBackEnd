@@ -1,6 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.application;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +42,9 @@ public class CategoryService implements CategoryUseCase {
 	public void registerCategory(RegisterCategoryCommand command) {
 		CreateCategoryCommand createCommand = new CreateCategoryCommand(command.userId(), command.categoryName());
 		Category category = createCategoryPort.createCategory(createCommand);
-		// TODO 이름에 중복이 없는지 확인
+
+		Set<String> categoryNames = findCategoryPort.findUserAndDefaultCategoryName(command.userId());
+		category.checkNameDuplicate(categoryNames);
 
 		ConsumptionGoal consumptionGoal = category.createConsumptionGoal();
 		createConsumptionGoalPort.createConsumptionGoal(command.userId(), consumptionGoal);

@@ -1,6 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
@@ -54,5 +55,10 @@ class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPo
 			.orElseThrow(NotFoundCategoryException::new);
 
 		return mapper.entityToCategory(categoryEntity);
+	}
+
+	@Override
+	public Set<String> findUserAndDefaultCategoryName(Long userId) {
+		return categoryRepository.findNameByUserIdOrIsDefaultTrue(userId);
 	}
 }
