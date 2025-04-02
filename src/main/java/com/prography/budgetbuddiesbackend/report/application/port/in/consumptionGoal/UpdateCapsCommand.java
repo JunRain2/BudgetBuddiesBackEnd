@@ -2,6 +2,8 @@ package com.prography.budgetbuddiesbackend.report.application.port.in.consumptio
 
 import java.util.List;
 
+import com.prography.budgetbuddiesbackend.report.adapter.in.web.UpdateCapRequest;
+
 import lombok.Getter;
 
 @Getter
@@ -9,9 +11,10 @@ public class UpdateCapsCommand {
 	private final Long userId;
 	private final List<UpdateCapCommand> updateCapCommands;
 
-	public UpdateCapsCommand(Long userId, List<UpdateCapCommand> updateCapCommands) {
+	public UpdateCapsCommand(Long userId, List<UpdateCapRequest> requests) {
 		this.userId = userId;
-		this.updateCapCommands = updateCapCommands;
+		this.updateCapCommands = requests.stream().map(c -> new UpdateCapCommand(c.id(), c.cap())).toList();
+
 	}
 
 	public record UpdateCapCommand(Long consumptionGoalId, int cap) {

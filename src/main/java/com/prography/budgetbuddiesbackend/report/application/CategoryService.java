@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CategoryService implements CategoryUseCase {
+class CategoryService implements CategoryUseCase {
 	private final FindCategoryPort findCategoryPort;
 	private final CreateCategoryPort createCategoryPort;
 	private final DeleteCategoryPort deleteCategoryPort;

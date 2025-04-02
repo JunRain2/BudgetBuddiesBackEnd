@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class ConsumptionGoalQueryRepository {
+class ConsumptionGoalQueryRepository {
 
 	private final JPAQueryFactory jpaQueryFactory;
 

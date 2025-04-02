@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.prography.budgetbuddiesbackend.report.adapter.out.exception.NotFoundExpenseException;
-import com.prography.budgetbuddiesbackend.report.application.UpdateExpensePort;
+import com.prography.budgetbuddiesbackend.report.application.port.in.expense.UpdateExpensePort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.expense.FindExpensePort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.expense.RegisterExpensePort;
 import com.prography.budgetbuddiesbackend.report.domain.Expense;

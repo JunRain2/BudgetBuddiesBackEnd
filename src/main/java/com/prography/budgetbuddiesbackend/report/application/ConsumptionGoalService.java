@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ConsumptionGoalService implements QueryConsumptionGoalUseCase, CommandConsumptionGoalUseCase {
+class ConsumptionGoalService implements QueryConsumptionGoalUseCase, CommandConsumptionGoalUseCase {
 	private final FindConsumptionGoalPort findConsumptionGoalPort;
 	private final UpdateConsumptionGoalPort updateConsumptionGoalPort;
 
