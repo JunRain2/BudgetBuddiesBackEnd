@@ -17,11 +17,11 @@ public class ConsumptionGoal {
 	private Money cap;
 
 	public void modifyCap(int cap) {
-		checkThisMont();
+		checkThisMonth();
 		this.cap = new Money(cap);
 	}
 
-	private void checkThisMont() {
+	private void checkThisMonth() {
 		LocalDate now = LocalDate.now();
 		now = now.withDayOfMonth(1);
 

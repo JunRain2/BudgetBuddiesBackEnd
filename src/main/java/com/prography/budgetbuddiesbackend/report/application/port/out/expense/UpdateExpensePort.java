@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.application.port.in.expense;
+package com.prography.budgetbuddiesbackend.report.application.port.out.expense;
 
 import com.prography.budgetbuddiesbackend.report.domain.Expense;
 

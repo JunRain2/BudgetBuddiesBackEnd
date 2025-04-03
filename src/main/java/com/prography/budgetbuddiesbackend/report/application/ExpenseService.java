@@ -11,7 +11,7 @@ import com.prography.budgetbuddiesbackend.report.application.port.in.expense.Fin
 import com.prography.budgetbuddiesbackend.report.application.port.in.expense.FindMonthlyExpenseResult;
 import com.prography.budgetbuddiesbackend.report.application.port.in.expense.RegisterExpenseCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.in.expense.UpdateExpenseCommand;
-import com.prography.budgetbuddiesbackend.report.application.port.in.expense.UpdateExpensePort;
+import com.prography.budgetbuddiesbackend.report.application.port.out.expense.UpdateExpensePort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.FindCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.expense.FindExpensePort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.expense.RegisterExpensePort;

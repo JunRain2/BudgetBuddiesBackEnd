@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.QueryConsumptionGoalResult;
+import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.FindMonthlyUserConsumptionGoalPort;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -17,13 +18,14 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-class ConsumptionGoalQueryRepository {
+class ConsumptionGoalQueryPersistenceAdapter implements FindMonthlyUserConsumptionGoalPort {
 
 	private final JPAQueryFactory jpaQueryFactory;
 
-	List<QueryConsumptionGoalResult> findMonthlyUserConsumptionGoalList(LocalDate goalMonth, Long userId) {
-		int year = goalMonth.getYear();
-		int month = goalMonth.getMonthValue();
+	@Override
+	public List<QueryConsumptionGoalResult> findMonthlyUserConsumptionGoalList(LocalDate goalAt, Long userId) {
+		int year = goalAt.getYear();
+		int month = goalAt.getMonthValue();
 
 		return jpaQueryFactory.select(
 				Projections.constructor(QueryConsumptionGoalResult.class,

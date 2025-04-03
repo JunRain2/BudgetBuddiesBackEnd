@@ -10,13 +10,15 @@ import com.prography.budgetbuddiesbackend.report.application.port.out.category.C
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.CreateCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.DeleteCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.category.FindCategoryPort;
+import com.prography.budgetbuddiesbackend.report.application.port.out.category.FindUserCategoryPort;
 import com.prography.budgetbuddiesbackend.report.domain.Category;
 
 import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPort, FindCategoryPort {
+class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPort, FindCategoryPort,
+	FindUserCategoryPort {
 
 	private final CategoryRepository categoryRepository;
 	private final CategoryMapper mapper;
