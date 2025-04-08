@@ -1,10 +1,8 @@
 package com.prography.budgetbuddiesbackend.report.domain;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import com.prography.budgetbuddiesbackend.common.vo.Money;
-import com.prography.budgetbuddiesbackend.report.domain.exception.DuplicateCategoryNameException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,11 +21,5 @@ public class Category {
 		now = now.withDayOfMonth(1);
 
 		return new ConsumptionGoal(null, categoryId, now, new Money(DEFAULT_CAP));
-	}
-
-	public void checkNameDuplicate(Set<String> categoryNames) {
-		if (categoryNames.contains(this.name)) {
-			throw new DuplicateCategoryNameException();
-		}
 	}
 }

@@ -17,6 +17,7 @@ import com.prography.budgetbuddiesbackend.report.application.port.out.category.F
 import com.prography.budgetbuddiesbackend.report.application.port.out.consumptionGoal.CreateConsumptionGoalPort;
 import com.prography.budgetbuddiesbackend.report.domain.Category;
 import com.prography.budgetbuddiesbackend.report.domain.ConsumptionGoal;
+import com.prography.budgetbuddiesbackend.report.application.exception.DuplicateCategoryNameException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,14 +41,21 @@ class CategoryService implements CategoryUseCase {
 
 	@Override
 	public void registerCategory(RegisterCategoryCommand command) {
+		checkUserCategoryNameDuplicate(command.userId(), command.categoryName());
+
 		CreateCategoryCommand createCommand = new CreateCategoryCommand(command.userId(), command.categoryName());
 		Category category = createCategoryPort.createCategory(createCommand);
 
-		Set<String> categoryNames = findUserCategoryPort.findUserAndDefaultCategoryName(command.userId());
-		category.checkNameDuplicate(categoryNames);
-
 		ConsumptionGoal consumptionGoal = category.createConsumptionGoal();
 		createConsumptionGoalPort.createConsumptionGoal(command.userId(), consumptionGoal);
+	}
+
+	private void checkUserCategoryNameDuplicate(Long userId, String name) {
+		Set<String> categoryNames = findUserCategoryPort.findUserAndDefaultCategoryName(userId);
+
+		if (categoryNames.contains(name)) {
+			throw new DuplicateCategoryNameException();
+		}
 	}
 
 	@Override

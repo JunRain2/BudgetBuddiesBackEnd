@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prography.budgetbuddiesbackend.report.adapter.in.FindExpenseResponse;
@@ -50,11 +51,13 @@ public class ExpenseController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@GetMapping("/{userId}/{yearMonth}")
+	@GetMapping("/{userId}")
 	ResponseEntity<FindMonthlyExpenseResponse> findMonthlyExpense(
 		@PathVariable Long userId,
-		@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth
+		@RequestParam(value = "yearMonth", required = false)
+		@DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth
 	) {
+		yearMonth = (yearMonth != null) ? yearMonth : YearMonth.now();
 		LocalDate thisMonth = yearMonth.atDay(1);
 		List<FindMonthlyExpenseResult> results = expenseUseCase.findMonthlyExpenseList(userId, thisMonth);
 
@@ -63,7 +66,7 @@ public class ExpenseController {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/{expenseId}")
+	@GetMapping("{userId}/{expenseId}")
 	ResponseEntity<FindExpenseResponse> findExpense(@PathVariable Long expenseId) {
 		FindDetailExpenseResult result = expenseUseCase.findDetailExpenseResult(expenseId);
 
@@ -77,7 +80,7 @@ public class ExpenseController {
 		return ResponseEntity.ok(response);
 	}
 
-	@PostMapping("/{expenseId}")
+	@PostMapping("{userId}/{expenseId}")
 	ResponseEntity<HttpStatus> updateExpense(@PathVariable Long expenseId, @RequestBody UpdateExpenseRequest request) {
 		UpdateExpenseCommand command = new UpdateExpenseCommand(expenseId, request.categoryId(), request.expenseAt());
 		expenseUseCase.updateExpense(command);

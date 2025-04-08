@@ -50,7 +50,7 @@ class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, Fi
 		consumptionGoalEntityList.forEach(
 			c -> {
 				ConsumptionGoal consumptionGoal = consumptionGoalMap.get(c.getId());
-				c.updateCap(c.getCap());
+				c.updateCap(consumptionGoal.getCap().value());
 			}
 		);
 

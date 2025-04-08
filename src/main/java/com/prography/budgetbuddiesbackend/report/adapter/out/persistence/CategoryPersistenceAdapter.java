@@ -38,7 +38,7 @@ class CategoryPersistenceAdapter implements CreateCategoryPort, DeleteCategoryPo
 
 	@Override
 	public List<Category> findUserAndDefaultCategory(Long userId) {
-		List<CategoryEntity> categoryEntityList = categoryRepository.findAllByUserIdAndIsDefaultTrue(userId);
+		List<CategoryEntity> categoryEntityList = categoryRepository.findAllByUserIdOrIsDefaultTrue(userId);
 
 		return categoryEntityList.stream().map(mapper::entityToCategory).toList();
 	}

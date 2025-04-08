@@ -42,3 +42,11 @@ CREATE TABLE expense
     FOREIGN KEY (user_id) REFERENCES user (id),
     FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE SET NULL
 );
+
+INSERT INTO category
+VALUES (null, null, true, NOW(), null, '카테고리 없음'),
+       (null, null, true, NOW(), null, '기본 카테고리1'),
+       (null, null, true, NOW(), null, '기본 카테고리2'),
+       (null, null, true, NOW(), null, '기본 카테고리3'),
+       (null, null, true, NOW(), null, '기본 카테고리4'),
+       (null, null, true, NOW(), null, '기본 카테고리5');

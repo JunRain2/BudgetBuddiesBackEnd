@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.domain.exception;
+package com.prography.budgetbuddiesbackend.report.application.exception;
 
 import org.springframework.http.HttpStatus;
 

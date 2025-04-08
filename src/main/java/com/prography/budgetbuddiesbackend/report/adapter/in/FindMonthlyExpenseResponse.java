@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import com.prography.budgetbuddiesbackend.report.application.port.in.expense.FindMonthlyExpenseResult;
 
+import lombok.Getter;
+
+@Getter
 public class FindMonthlyExpenseResponse {
 	private final Map<LocalDate, ExpenseResponse> expenseList;
 

@@ -38,7 +38,7 @@ class ConsumptionGoalQueryPersistenceAdapter implements FindMonthlyUserConsumpti
 			).from(consumptionGoalEntity)
 			.leftJoin(categoryEntity).on(consumptionGoalEntity.categoryId.eq(categoryEntity.id))
 			.leftJoin(expenseEntity).on(
-				expenseEntity.categoryId.coalesce(0L).eq(consumptionGoalEntity.categoryId),
+				expenseEntity.categoryId.coalesce(1L).eq(consumptionGoalEntity.categoryId),
 				expenseEntity.expenseAt.month().eq(month),
 				expenseEntity.expenseAt.year().eq(year)
 			)
