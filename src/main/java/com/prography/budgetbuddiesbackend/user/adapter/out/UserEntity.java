@@ -1,4 +1,6 @@
-package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
+package com.prography.budgetbuddiesbackend.user.adapter.out;
+
+import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user")
 @Getter
-class UserEntity {
+class UserEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

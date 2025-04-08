@@ -2,7 +2,7 @@ CREATE TABLE user
 (
     id         BIGINT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
-    update_at  TIMESTAMP
+    updated_at  TIMESTAMP
 );
 
 CREATE TABLE category

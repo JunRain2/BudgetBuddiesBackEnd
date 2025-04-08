@@ -29,6 +29,14 @@ class ConsumptionGoalPersistenceAdapter implements CreateConsumptionGoalPort, Fi
 	}
 
 	@Override
+	public void createConsumptionGoalList(Long userId, List<ConsumptionGoal> consumptionGoalList) {
+		List<ConsumptionGoalEntity> consumptionGoalEntityList = consumptionGoalList.stream()
+			.map(c -> mapper.consumptionGoalToEntity(c, userId)).toList();
+
+		consumptionGoalRepository.saveAll(consumptionGoalEntityList);
+	}
+
+	@Override
 	public Map<Long, ConsumptionGoal> findThisMonthUserConsumptionGoalMap(Long userId,
 		List<Long> consumptionGoalIdList) {
 		List<ConsumptionGoalEntity> consumptionGoalEntities = consumptionGoalRepository.findAllByUserIdAndIdIn(userId,
