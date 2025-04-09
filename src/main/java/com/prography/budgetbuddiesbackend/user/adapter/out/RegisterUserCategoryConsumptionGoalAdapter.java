@@ -15,6 +15,6 @@ class RegisterUserCategoryConsumptionGoalAdapter
 	private final ExternalToCategoryAdapter externalToCategoryAdapter;
 
 	public void registerUserCategoryConsumptionGoal(Long userId) {
-		externalToCategoryAdapter.createUserDefaultCategoryList();
+		externalToCategoryAdapter.createUserDefaultCategoryList(userId);
 	}
 }
