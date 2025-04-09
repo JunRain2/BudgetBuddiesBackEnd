@@ -1,6 +1,8 @@
 package com.prography.budgetbuddiesbackend.report.adapter.out.persistence;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @RequiredArgsConstructor
 class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
-	private final int CHUNK_SIZE = 100;
+	private final int CHUNK_SIZE = 10;
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
@@ -92,8 +94,8 @@ class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
 		return new JdbcBatchItemWriterBuilder<ConsumptionGoalEntity>()
 			.dataSource(dataSource)
 			.sql("""
-				INSERT INTO consumption_goal (user_id, category_id ,goal_at, cap)
-				VALUES (?, ?, ?, ?)
+				INSERT INTO consumption_goal (user_id, category_id, goal_at, cap, created_at)
+				VALUES (?, ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE cap = VALUES(cap)
 				""")
 			.itemPreparedStatementSetter((goal, ps) -> {
@@ -101,6 +103,7 @@ class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
 				ps.setLong(2, goal.getCategoryId());
 				ps.setObject(3, goal.getGoalAt());
 				ps.setInt(4, goal.getCap());
+				ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
 			})
 			.build();
 	}
