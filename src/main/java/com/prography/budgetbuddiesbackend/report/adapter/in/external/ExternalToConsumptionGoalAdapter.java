@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ExternalToCategoryAdapter {
+public class ExternalToConsumptionGoalAdapter {
 
 	private final RegisterDefaultCategoryConsumptionGoalUseCase registerDefaultCategoryConsumptionGoalUseCase;
 
