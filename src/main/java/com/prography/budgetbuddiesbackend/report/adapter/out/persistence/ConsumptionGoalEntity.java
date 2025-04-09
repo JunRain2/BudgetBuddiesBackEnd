@@ -37,5 +37,9 @@ class ConsumptionGoalEntity extends BaseEntity {
 	public void updateCap(int cap) {
 		this.cap = cap;
 	}
+
+	public ConsumptionGoalEntity generateThisMonthConsumptionGoal() {
+		return new ConsumptionGoalEntity(null, this.userId, this.categoryId, this.cap, this.goalAt.plusMonths(1));
+	}
 }
 

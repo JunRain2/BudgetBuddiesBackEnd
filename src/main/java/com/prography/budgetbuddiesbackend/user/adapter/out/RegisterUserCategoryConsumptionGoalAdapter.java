@@ -3,18 +3,18 @@ package com.prography.budgetbuddiesbackend.user.adapter.out;
 import org.springframework.stereotype.Repository;
 
 import com.prography.budgetbuddiesbackend.report.application.port.in.consumptionGoal.RegisterDefaultCategoryConsumptionGoalUseCase;
-import com.prography.budgetbuddiesbackend.user.application.port.out.RegisterUserDefaultCategoryConsumptionGoalPort;
+import com.prography.budgetbuddiesbackend.user.application.port.out.RegisterUserCategoryConsumptionGoalPort;
 
 import lombok.AllArgsConstructor;
 
 @Repository
 @AllArgsConstructor
-class RegisterUserDefaultCategoryConsumptionGoalAdapter
-	implements RegisterUserDefaultCategoryConsumptionGoalPort {
+class RegisterUserCategoryConsumptionGoalAdapter
+	implements RegisterUserCategoryConsumptionGoalPort {
 
 	private final RegisterDefaultCategoryConsumptionGoalUseCase registerDefaultCategoryConsumptionGoalUseCase;
 
-	public void registerUserDefaultCategoryConsumptionGoal(Long userId) {
+	public void registerUserCategoryConsumptionGoal(Long userId) {
 		registerDefaultCategoryConsumptionGoalUseCase.registerConsumptionGoal(userId);
 	}
 }

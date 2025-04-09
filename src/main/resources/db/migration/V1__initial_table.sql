@@ -2,7 +2,7 @@ CREATE TABLE user
 (
     id         BIGINT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
-    updated_at  TIMESTAMP
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE category
@@ -26,7 +26,9 @@ CREATE TABLE consumption_goal
     created_at  TIMESTAMP NOT NULL,
     updated_at  TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user (id),
-    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE,
+    CONSTRAINT ux_consumption_goal_user_category_month
+        UNIQUE (user_id, category_id, goal_at)
 );
 
 CREATE TABLE expense
