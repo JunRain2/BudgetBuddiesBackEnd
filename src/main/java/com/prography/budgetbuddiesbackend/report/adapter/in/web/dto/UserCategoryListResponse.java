@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.adapter.in;
+package com.prography.budgetbuddiesbackend.report.adapter.in.web.dto;
 
 import java.util.List;
 

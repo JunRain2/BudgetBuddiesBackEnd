@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.prography.budgetbuddiesbackend.report.adapter.in.RegisterCategoryRequest;
-import com.prography.budgetbuddiesbackend.report.adapter.in.UserCategoryListResponse;
+import com.prography.budgetbuddiesbackend.report.adapter.in.web.dto.RegisterCategoryRequest;
+import com.prography.budgetbuddiesbackend.report.adapter.in.web.dto.UserCategoryListResponse;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.CategoryUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.DeleteCategoryCommand;
 import com.prography.budgetbuddiesbackend.report.application.port.in.category.FindUserCategoryResult;

@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.prography.budgetbuddiesbackend.report.adapter.in.FindExpenseResponse;
-import com.prography.budgetbuddiesbackend.report.adapter.in.FindMonthlyExpenseResponse;
-import com.prography.budgetbuddiesbackend.report.adapter.in.RegisterExpenseRequest;
-import com.prography.budgetbuddiesbackend.report.adapter.in.UpdateExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.adapter.in.web.dto.FindExpenseResponse;
+import com.prography.budgetbuddiesbackend.report.adapter.in.web.dto.FindMonthlyExpenseResponse;
+import com.prography.budgetbuddiesbackend.report.adapter.in.web.dto.RegisterExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.adapter.in.web.dto.UpdateExpenseRequest;
 import com.prography.budgetbuddiesbackend.report.application.port.in.expense.ExpenseUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.expense.FindDetailExpenseResult;
 import com.prography.budgetbuddiesbackend.report.application.port.in.expense.FindMonthlyExpenseResult;
