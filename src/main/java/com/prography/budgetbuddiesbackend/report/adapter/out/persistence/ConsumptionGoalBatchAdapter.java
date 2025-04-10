@@ -18,8 +18,10 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @RequiredArgsConstructor
 class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
-	private final int CHUNK_SIZE = 10;
+	private final int CHUNK_SIZE = 100;
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
@@ -59,7 +61,7 @@ class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
 	}
 
 	@Bean
-	public JpaPagingItemReader<ConsumptionGoalEntity> reader() {
+	public JpaCursorItemReader<ConsumptionGoalEntity> reader() {
 		LocalDate prevMonth = LocalDate.now().minusMonths(1).withDayOfMonth(1);
 		LocalDate thisMonth = LocalDate.now().withDayOfMonth(1);
 
@@ -67,20 +69,19 @@ class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
 		params.put("prevMonth", prevMonth);
 		params.put("thisMonth", thisMonth);
 
-		return new JpaPagingItemReaderBuilder<ConsumptionGoalEntity>().name("consumptionGoalPagingReader")
+		return new JpaCursorItemReaderBuilder<ConsumptionGoalEntity>().name("consumptionGoalPagingReader")
 			.entityManagerFactory(entityManagerFactory)
 			.queryString("""
-					SELECT c FROM ConsumptionGoalEntity c
-					WHERE c.goalAt = :prevMonth
-					AND NOT EXISTS (
-						SELECT 1 FROM ConsumptionGoalEntity cc
-						WHERE cc.userId = c.userId
-						AND cc.categoryId = c.categoryId
-						AND cc.goalAt = :thisMonth
-					)
+				SELECT c FROM ConsumptionGoalEntity c
+				WHERE c.goalAt = :prevMonth
+				AND NOT EXISTS (
+				    SELECT 1 FROM ConsumptionGoalEntity cc
+				    WHERE cc.userId = c.userId
+				      AND cc.categoryId = c.categoryId
+				      AND cc.goalAt = :thisMonth
+				)
 				""")
 			.parameterValues(params)
-			.pageSize(CHUNK_SIZE)
 			.build();
 	}
 

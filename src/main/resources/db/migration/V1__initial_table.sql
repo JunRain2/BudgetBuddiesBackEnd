@@ -46,9 +46,13 @@ CREATE TABLE expense
 );
 
 INSERT INTO category
-VALUES (null, null, true, NOW(), null, '카테고리 없음'),
-       (null, null, true, NOW(), null, '기본 카테고리1'),
-       (null, null, true, NOW(), null, '기본 카테고리2'),
-       (null, null, true, NOW(), null, '기본 카테고리3'),
-       (null, null, true, NOW(), null, '기본 카테고리4'),
-       (null, null, true, NOW(), null, '기본 카테고리5');
+VALUES (1, null, true, NOW(), null, '카테고리 없음'),
+       (2, null, true, NOW(), null, '기본 카테고리1'),
+       (3, null, true, NOW(), null, '기본 카테고리2'),
+       (4, null, true, NOW(), null, '기본 카테고리3'),
+       (5, null, true, NOW(), null, '기본 카테고리4'),
+       (6, null, true, NOW(), null, '기본 카테고리5'),
+       (7, null, true, NOW(), null, '기본 카테고리6'),
+       (8, null, true, NOW(), null, '기본 카테고리7'),
+       (9, null, true, NOW(), null, '기본 카테고리8'),
+       (10, null, true, NOW(), null, '기본 카테고리9');
