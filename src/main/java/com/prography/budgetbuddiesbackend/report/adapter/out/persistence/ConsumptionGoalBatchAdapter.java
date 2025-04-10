@@ -19,10 +19,8 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JpaCursorItemReader;
-import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
-import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -57,6 +55,9 @@ class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
 			.reader(reader())
 			.processor(processor())
 			.writer(writer())
+			.faultTolerant()
+			.retry(Exception.class)
+			.retryLimit(3)
 			.build();
 	}
 
