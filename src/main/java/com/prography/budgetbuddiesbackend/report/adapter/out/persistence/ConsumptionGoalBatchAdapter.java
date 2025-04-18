@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @RequiredArgsConstructor
 class ConsumptionGoalBatchAdapter implements ConsumptionGoalMigrationBatchPort {
-	private final int CHUNK_SIZE = 100;
+	private final int CHUNK_SIZE = 1000;
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
