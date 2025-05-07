@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.adapter.out;
+package com.prography.budgetbuddiesbackend.report.adapter.out;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "user", schema = "budgetbuddies")
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Long id;

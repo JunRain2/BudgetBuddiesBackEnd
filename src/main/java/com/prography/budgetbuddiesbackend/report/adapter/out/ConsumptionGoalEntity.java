@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.adapter.out;
+package com.prography.budgetbuddiesbackend.report.adapter.out;
 
 import java.time.YearMonth;
 
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "consumption_goal", schema = "budgetbuddies")
-public class ConsumptionGoal extends BaseEntity {
+public class ConsumptionGoalEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
@@ -31,12 +31,12 @@ public class ConsumptionGoal extends BaseEntity {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	private UserEntity user;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "category_id", nullable = false)
-	private Category category;
+	private CategoryEntity category;
 
 	@NotNull
 	@Column(name = "cap", nullable = false)
@@ -45,4 +45,15 @@ public class ConsumptionGoal extends BaseEntity {
 	@NotNull
 	@Column(name = "goal_month", nullable = false, columnDefinition = "CHAR(7)")
 	private YearMonth goalMonth;
+
+	private ConsumptionGoalEntity(UserEntity user, CategoryEntity category, Integer cap, YearMonth goalMonth) {
+		this.user = user;
+		this.category = category;
+		this.cap = cap;
+		this.goalMonth = goalMonth;
+	}
+
+	public static ConsumptionGoalEntity of(UserEntity user, CategoryEntity category, Integer cap, YearMonth yearMonth) {
+		return new ConsumptionGoalEntity(user, category, cap, yearMonth);
+	}
 }

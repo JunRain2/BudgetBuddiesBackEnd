@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.adapter.out;
+package com.prography.budgetbuddiesbackend.report.adapter.out;
 
 import java.time.LocalDate;
 
@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "expense", schema = "budgetbuddies")
-public class Expense extends BaseEntity {
+public class ExpenseEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
@@ -32,11 +32,11 @@ public class Expense extends BaseEntity {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	private UserEntity user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
-	private Category category;
+	private CategoryEntity category;
 
 	@NotNull
 	@Column(name = "amount", nullable = false)
@@ -50,4 +50,18 @@ public class Expense extends BaseEntity {
 	@NotNull
 	@Column(name = "expense_at", nullable = false)
 	private LocalDate expenseAt;
+
+	private ExpenseEntity(UserEntity user, CategoryEntity category, Integer amount, String description,
+		LocalDate expenseAt) {
+		this.user = user;
+		this.category = category;
+		this.amount = amount;
+		this.description = description;
+		this.expenseAt = expenseAt;
+	}
+
+	public static ExpenseEntity of(UserEntity user, CategoryEntity category, Integer amount, String description,
+		LocalDate expenseAt) {
+		return new ExpenseEntity(user, category, amount, description, expenseAt);
+	}
 }

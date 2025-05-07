@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.adapter.out;
+package com.prography.budgetbuddiesbackend.report.adapter.out;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 
@@ -19,14 +19,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "category", schema = "budgetbuddies")
-public class Category extends BaseEntity {
+public class CategoryEntity extends BaseEntity {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	private User user;
+	private UserEntity user;
 
 	@NotNull
 	@Column(name = "is_default", nullable = false)
@@ -36,4 +36,14 @@ public class Category extends BaseEntity {
 	@NotNull
 	@Column(name = "name", nullable = false, length = 20)
 	private String name;
+
+	private CategoryEntity(UserEntity user, Boolean isDefault, String name) {
+		this.user = user;
+		this.isDefault = isDefault;
+		this.name = name;
+	}
+
+	public static CategoryEntity of(UserEntity user, Boolean isDefault, String name) {
+		return new CategoryEntity(user, isDefault, name);
+	}
 }
