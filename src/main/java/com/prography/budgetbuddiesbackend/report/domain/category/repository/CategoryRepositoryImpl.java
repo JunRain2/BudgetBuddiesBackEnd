@@ -10,7 +10,7 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.NotFoundCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.category.service.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
+import com.prography.budgetbuddiesbackend.report.domain.user.repository.JpaUserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoryRepositoryImpl implements CategoryRepository {
 
 	private final JpaCategoryRepository categoryRepository;
-	private final UserRepository userRepository;
+	private final JpaUserRepository userRepository;
 
 	public Category registerCategory(RegisterCategoryRequest request, Long userId) {
 		User user = userRepository.getReferenceById(userId);
