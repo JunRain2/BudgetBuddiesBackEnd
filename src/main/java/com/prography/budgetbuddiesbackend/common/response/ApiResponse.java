@@ -14,7 +14,7 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponse<T> {
 	@JsonIgnore
-	private final ResultCode code;
+	private final ResultCode resultCode;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private T data;
 
@@ -35,13 +35,13 @@ public class ApiResponse<T> {
 	}
 
 	@JsonProperty("code")
-	public String getStatus() {
-		return code.getCode();  // ResultCode 내부 status 필드
+	public String getResponseCode() {
+		return resultCode.getCode();  // ResultCode 내부 status 필드
 	}
 
 	@JsonProperty("message")
 	public String getMessage() {
-		return code.getMessage(); // ResultCode 내부 message 필드
+		return resultCode.getMessage(); // ResultCode 내부 message 필드
 	}
 
 }
