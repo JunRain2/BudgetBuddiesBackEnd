@@ -1,5 +1,6 @@
 package com.prography.budgetbuddiesbackend.report.adapter.out.category;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Repository;
@@ -29,15 +30,22 @@ public class CategoryPersistenceAdapter
 	public Category registerCategory(Category category) {
 		UserEntity user = userRepository.getReferenceById(category.getUserId());
 
-		CategoryEntity newCategory = mapper.entityFromDomain(category, user);
+		CategoryEntity newCategory = mapper.domainToEntity(category, user);
 		newCategory = categoryRepository.save(newCategory);
 
-		return mapper.domainFromEntity(newCategory);
+		return mapper.entityToDomain(newCategory);
 	}
 
 	@Override
-	public Set<String> userCategoryNames(Long userId) {
+	public Set<String> findUserCategoryNames(Long userId) {
 		return categoryRepository.findAllCategoryNamesByUserIdOrDefault(userId);
+	}
+
+	@Override
+	public List<Category> findUserCategories(Long userId) {
+		List<CategoryEntity> userCategoryEntities = categoryRepository.findUserCategoriesByUserId(userId);
+
+		return userCategoryEntities.stream().map(mapper::entityToDomain).toList();
 	}
 
 	@Override
@@ -49,6 +57,6 @@ public class CategoryPersistenceAdapter
 	@Override
 	public Category findById(Long categoryId) {
 		CategoryEntity category = categoryRepository.findById(categoryId).orElseThrow(NotFoundCategoryException::new);
-		return mapper.domainFromEntity(category);
+		return mapper.entityToDomain(category);
 	}
 }

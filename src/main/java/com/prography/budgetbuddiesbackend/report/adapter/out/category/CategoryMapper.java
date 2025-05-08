@@ -8,12 +8,12 @@ import com.prography.budgetbuddiesbackend.report.domain.enums.CategoryType;
 
 @Component
 class CategoryMapper {
-	CategoryEntity entityFromDomain(Category category, UserEntity user) {
+	CategoryEntity domainToEntity(Category category, UserEntity user) {
 		Boolean isDefault = category.getType() != CategoryType.CUSTOM;
 		return CategoryEntity.of(user, isDefault, category.getName());
 	}
 
-	public Category domainFromEntity(CategoryEntity category) {
+	public Category entityToDomain(CategoryEntity category) {
 		CategoryType type = category.getIsDefault() ? CategoryType.DEFAULT : CategoryType.CUSTOM;
 		return Category.of(category.getId(), category.getUser().getId(), type, category.getName());
 	}

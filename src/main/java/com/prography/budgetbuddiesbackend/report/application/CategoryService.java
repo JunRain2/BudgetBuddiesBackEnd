@@ -1,5 +1,6 @@
 package com.prography.budgetbuddiesbackend.report.application;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import com.prography.budgetbuddiesbackend.report.application.exception.Duplicate
 import com.prography.budgetbuddiesbackend.report.application.exception.UnmodifiableCategoryException;
 import com.prography.budgetbuddiesbackend.report.application.port.in.CategoryUseCase;
 import com.prography.budgetbuddiesbackend.report.application.port.in.RegisterCategoryCommand;
+import com.prography.budgetbuddiesbackend.report.application.port.in.UserCategoryResponse;
 import com.prography.budgetbuddiesbackend.report.application.port.out.DeleteCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.FindCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.FindUserCategoryPort;
@@ -27,18 +29,18 @@ public class CategoryService implements CategoryUseCase {
 	private final FindCategoryPort findCategoryPort;
 	private final DeleteCategoryPort deleteCategoryPort;
 
-	private final CategoryMapper categoryMapper;
+	private final CategoryMapper mapper;
 
 	@Override
 	public void registerCategory(RegisterCategoryCommand command) {
 		validateCategoryCreatable(command);
 
-		Category newCategory = categoryMapper.categoryFromRegisterCategoryCommand(command);
+		Category newCategory = mapper.registerCategoryCommandToDomain(command);
 		registerCategoryPort.registerCategory(newCategory);
 	}
 
 	private void validateCategoryCreatable(RegisterCategoryCommand command) {
-		Set<String> userCategoryNames = findUserCategoryPort.userCategoryNames(command.userId());
+		Set<String> userCategoryNames = findUserCategoryPort.findUserCategoryNames(command.userId());
 		if (userCategoryNames.contains(command.name())) {
 			throw new DuplicateCategoryNameException();
 		}
@@ -56,5 +58,12 @@ public class CategoryService implements CategoryUseCase {
 		if (category.getType() == CategoryType.DEFAULT || !category.getUserId().equals(userId)) {
 			throw new UnmodifiableCategoryException();
 		}
+	}
+
+	@Override
+	public List<UserCategoryResponse> findUserCategories(Long userId) {
+		List<Category> userCategories = findUserCategoryPort.findUserCategories(userId);
+
+		return userCategories.stream().map(mapper::domainToUserCategoryResponse).toList();
 	}
 }
