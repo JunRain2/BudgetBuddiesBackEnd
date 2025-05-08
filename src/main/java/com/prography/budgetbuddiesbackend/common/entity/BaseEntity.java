@@ -9,22 +9,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
 @SQLDelete(sql = "UPDATE #{#entityName} SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
+@MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public abstract class BaseEntity {
 
 	@NotNull
 	@ColumnDefault("CURRENT_TIMESTAMP")
 	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt;
+	protected LocalDateTime createdAt;
 
 	@ColumnDefault("CURRENT_TIMESTAMP")
 	@Column(name = "updated_at")
-	private LocalDateTime updatedAt;
+	protected LocalDateTime updatedAt;
 
 	@Column(name = "deleted_at")
-	private LocalDateTime deletedAt;
+	protected LocalDateTime deletedAt;
 }

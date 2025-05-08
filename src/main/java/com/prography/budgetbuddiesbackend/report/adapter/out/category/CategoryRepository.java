@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
-	@Query("SELECT c.name FROM CategoryEntity c WHERE c.user.id = :userId OR c.isDefault = true")
+	@Query("SELECT c.name FROM CategoryEntity c WHERE (c.user.id = :userId OR c.isDefault = true) AND c.deletedAt IS NULL")
 	Set<String> findAllCategoryNamesByUserIdOrDefault(@Param("userId") Long userId);
 }
