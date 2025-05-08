@@ -24,7 +24,8 @@ class GlobalExceptionHandler {
 			code.getMessage(),
 			code.getHttpStatus().value(),
 			request.getRequestURI(),
-			LocalDateTime.now());
+			LocalDateTime.now(),
+			ex.getErrors());
 
 		return ResponseEntity.status(code.getHttpStatus()).body(response);
 	}
@@ -46,7 +47,8 @@ class GlobalExceptionHandler {
 			code.getMessage(),
 			code.getHttpStatus().value(),
 			request.getRequestURI(),
-			LocalDateTime.now(), errors);
+			LocalDateTime.now(),
+			errors);
 
 		return ResponseEntity.status(code.getHttpStatus()).body(response);
 	}

@@ -19,7 +19,7 @@ class ApiErrorResponse {
 	private final String path;              // 요청 URI
 	private final LocalDateTime timestamp;  // 에러 발생 시각
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private List<ErrorDetail> errors;
 
 	public static ApiErrorResponse of(String code, String message, int status, String path, LocalDateTime timestamp) {
