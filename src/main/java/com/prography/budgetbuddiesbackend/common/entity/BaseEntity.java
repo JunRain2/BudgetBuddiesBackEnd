@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -22,10 +24,12 @@ public abstract class BaseEntity {
 
 	@NotNull
 	@ColumnDefault("CURRENT_TIMESTAMP")
+	@CreatedDate
 	@Column(name = "created_at", nullable = false, updatable = false)
 	protected LocalDateTime createdAt;
 
 	@ColumnDefault("CURRENT_TIMESTAMP")
+	@LastModifiedDate
 	@Column(name = "updated_at")
 	protected LocalDateTime updatedAt;
 
