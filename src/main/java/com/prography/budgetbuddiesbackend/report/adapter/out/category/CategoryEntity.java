@@ -1,6 +1,7 @@
-package com.prography.budgetbuddiesbackend.report.adapter.out;
+package com.prography.budgetbuddiesbackend.report.adapter.out.category;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
+import com.prography.budgetbuddiesbackend.report.adapter.out.UserEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -3,6 +3,7 @@ package com.prography.budgetbuddiesbackend.report.adapter.out;
 import java.time.YearMonth;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
+import com.prography.budgetbuddiesbackend.report.adapter.out.category.CategoryEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
