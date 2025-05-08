@@ -15,6 +15,6 @@ class CategoryMapper {
 
 	public Category domainFromEntity(CategoryEntity category) {
 		CategoryType type = category.getIsDefault() ? CategoryType.DEFAULT : CategoryType.CUSTOM;
-		return Category.of(category.getId(), type, category.getName());
+		return Category.of(category.getId(), category.getUser().getId(), type, category.getName());
 	}
 }

@@ -10,6 +10,6 @@ import com.prography.budgetbuddiesbackend.report.domain.Category;
 @Component
 class CategoryMapper {
 	Category categoryFromRegisterCategoryCommand(RegisterCategoryCommand command) {
-		return Category.of(null, CUSTOM, command.name());
+		return Category.of(null, command.userId(), CUSTOM, command.name());
 	}
 }

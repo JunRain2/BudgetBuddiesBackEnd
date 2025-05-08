@@ -6,11 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prography.budgetbuddiesbackend.report.application.exception.DuplicateCategoryNameException;
+import com.prography.budgetbuddiesbackend.report.application.exception.UnmodifiableCategoryException;
 import com.prography.budgetbuddiesbackend.report.application.port.in.CategoryUseCase;
-import com.prography.budgetbuddiesbackend.report.application.port.in.FindUserCategoryNamesPort;
 import com.prography.budgetbuddiesbackend.report.application.port.in.RegisterCategoryCommand;
+import com.prography.budgetbuddiesbackend.report.application.port.out.DeleteCategoryPort;
+import com.prography.budgetbuddiesbackend.report.application.port.out.FindCategoryPort;
+import com.prography.budgetbuddiesbackend.report.application.port.out.FindUserCategoryPort;
 import com.prography.budgetbuddiesbackend.report.application.port.out.RegisterCategoryPort;
 import com.prography.budgetbuddiesbackend.report.domain.Category;
+import com.prography.budgetbuddiesbackend.report.domain.enums.CategoryType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +23,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CategoryService implements CategoryUseCase {
 	private final RegisterCategoryPort registerCategoryPort;
-	private final FindUserCategoryNamesPort findUserCategoryNamesPort;
+	private final FindUserCategoryPort findUserCategoryPort;
+	private final FindCategoryPort findCategoryPort;
+	private final DeleteCategoryPort deleteCategoryPort;
 
 	private final CategoryMapper categoryMapper;
 
@@ -28,13 +34,27 @@ public class CategoryService implements CategoryUseCase {
 		validateCategoryCreatable(command);
 
 		Category newCategory = categoryMapper.categoryFromRegisterCategoryCommand(command);
-		registerCategoryPort.registerCategory(newCategory, command.userId());
+		registerCategoryPort.registerCategory(newCategory);
 	}
 
 	private void validateCategoryCreatable(RegisterCategoryCommand command) {
-		Set<String> userCategoryNames = findUserCategoryNamesPort.userCategoryNames(command.userId());
+		Set<String> userCategoryNames = findUserCategoryPort.userCategoryNames(command.userId());
 		if (userCategoryNames.contains(command.name())) {
 			throw new DuplicateCategoryNameException();
+		}
+	}
+
+	@Override
+	public void deleteCategory(Long categoryId, Long userId) {
+		Category category = findCategoryPort.findById(categoryId);
+		validateCategoryModifiable(userId, category);
+
+		deleteCategoryPort.deleteCategory(category);
+	}
+
+	private void validateCategoryModifiable(Long userId, Category category) {
+		if (category.getType() == CategoryType.DEFAULT || !category.getUserId().equals(userId)) {
+			throw new UnmodifiableCategoryException();
 		}
 	}
 }

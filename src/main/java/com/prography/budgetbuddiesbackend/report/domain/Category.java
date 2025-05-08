@@ -10,10 +10,11 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Category {
 	private Long id;
+	private Long userId;
 	private CategoryType type;
 	private String name;
 
-	public static Category of(Long id, CategoryType type, String name) {
-		return new Category(id, type, name);
+	public static Category of(Long id, Long userId ,CategoryType type, String name) {
+		return new Category(id, userId, type, name);
 	}
 }
