@@ -1,5 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.domain.category.service;
 
+import static com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryType.*;
+
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +52,7 @@ public class CategoryService {
 	}
 
 	private void validateCategoryCreatable(String categoryName, Long userId) {
-		Set<String> userCategoryNames = categoryRepository.findAllCategoryNamesByUserIdOrDefault(userId);
+		Set<String> userCategoryNames = categoryRepository.findAllCategoryNamesByUserIdOrType(userId, DEFAULT);
 		if (userCategoryNames.contains(categoryName)) {
 			throw new DuplicateCategoryNameException();
 		}
@@ -78,13 +80,13 @@ public class CategoryService {
 	}
 
 	private void validateCategoryModifiable(Long userId, Category category) {
-		if (Boolean.TRUE.equals(category.getIsDefault()) || !category.getUser().getId().equals(userId)) {
+		if (DEFAULT.equals(category.getType()) || !category.getUser().getId().equals(userId)) {
 			throw new UnmodifiableCategoryException();
 		}
 	}
 
 	public List<UserCategoryResponse> findUserCategories(Long userId) {
-		List<Category> userCategories = categoryRepository.findUserCategoriesByUserId(userId);
+		List<Category> userCategories = categoryRepository.findUserCategoriesByUserIdOrType(userId, DEFAULT);
 
 		return userCategories.stream().map(mapper::entityToUserCategoryResponse).toList();
 	}

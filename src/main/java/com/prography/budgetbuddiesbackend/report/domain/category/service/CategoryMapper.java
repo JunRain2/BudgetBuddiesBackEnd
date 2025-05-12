@@ -14,6 +14,6 @@ public class CategoryMapper {
 	}
 
 	public Category registerCategoryRequestToEntity(RegisterCategoryRequest request, User user) {
-		return Category.of(user, false, request.name());
+		return Category.of(user, request.name());
 	}
 }

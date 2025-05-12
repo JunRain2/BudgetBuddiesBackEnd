@@ -8,6 +8,8 @@ import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -33,22 +35,23 @@ public class Category extends BaseEntity {
 	private User user;
 
 	@NotNull
-	@Column(name = "is_default", nullable = false)
-	private Boolean isDefault = false;
+	@Column(name = "type", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private CategoryType type;
 
 	@Size(max = 20)
 	@NotNull
 	@Column(name = "name", nullable = false, length = 20)
 	private String name;
 
-	private Category(User user, Boolean isDefault, String name) {
+	private Category(User user, String name) {
 		this.user = user;
-		this.isDefault = isDefault;
 		this.name = name;
+		this.type = CategoryType.CUSTOM;
 	}
 
-	public static Category of(User user, Boolean isDefault, String name) {
-		return new Category(user, isDefault, name);
+	public static Category of(User user, String name) {
+		return new Category(user, name);
 	}
 
 	public ConsumptionGoal createInitialGoal(YearMonth yearMonth) {
