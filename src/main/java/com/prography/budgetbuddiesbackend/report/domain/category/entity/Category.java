@@ -1,6 +1,9 @@
 package com.prography.budgetbuddiesbackend.report.domain.category.entity;
 
+import java.time.YearMonth;
+
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -46,5 +49,11 @@ public class Category extends BaseEntity {
 
 	public static Category of(User user, Boolean isDefault, String name) {
 		return new Category(user, isDefault, name);
+	}
+
+	public ConsumptionGoal createInitialGoal(YearMonth yearMonth) {
+		final Integer INITIAL_CAP = 200000;
+
+		return ConsumptionGoal.of(this.user, this, INITIAL_CAP, yearMonth);
 	}
 }

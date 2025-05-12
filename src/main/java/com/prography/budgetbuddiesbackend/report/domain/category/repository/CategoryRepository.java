@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 
-public interface JpaCategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 	@Query("SELECT c.name FROM Category c WHERE (c.user.id = :userId OR c.isDefault = true) AND c.deletedAt IS NULL")
 	Set<String> findAllCategoryNamesByUserIdOrDefault(@Param("userId") Long userId);
 
