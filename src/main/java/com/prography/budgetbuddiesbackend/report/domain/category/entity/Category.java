@@ -55,8 +55,7 @@ public class Category extends BaseEntity {
 	}
 
 	public ConsumptionGoal createInitialGoal(YearMonth yearMonth) {
-		final Integer INITIAL_CAP = 200000;
-
-		return ConsumptionGoal.of(this.user, this, INITIAL_CAP, yearMonth);
+		final Integer initialCap = 200000;
+		return ConsumptionGoal.of(this.user, this, initialCap, yearMonth);
 	}
 }
