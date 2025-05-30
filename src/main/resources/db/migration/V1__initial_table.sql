@@ -11,7 +11,7 @@ CREATE TABLE category
     id         BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id    BIGINT,
     type       VARCHAR(10) NOT NULL,
-    name       VARCHAR(20) NOT NULL,
+    name       VARCHAR(20) NOT NULL CHECK (TRIM(name) <> ''),
     created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP            DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP            DEFAULT NULL,
@@ -61,4 +61,4 @@ VALUES (1, NULL, 'DEFAULT', '기본 카테고리1', NOW()),
        (7, NULL, 'DEFAULT', '기본 카테고리7', NOW()),
        (8, NULL, 'DEFAULT', '기본 카테고리8', NOW()),
        (9, NULL, 'DEFAULT', '기본 카테고리9', NOW()),
-       (10, NULL, ' DEFAULT', '기본 카테고리10', NOW());
+       (10, NULL, 'DEFAULT', '기본 카테고리10', NOW());

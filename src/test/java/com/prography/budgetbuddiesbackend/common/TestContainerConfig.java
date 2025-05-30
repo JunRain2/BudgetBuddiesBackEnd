@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend;
+package com.prography.budgetbuddiesbackend.common;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -11,7 +11,7 @@ public class TestContainerConfig {
 	@Bean
 	@ServiceConnection
 	public MySQLContainer<?> createMySQLContainer() {
-		MySQLContainer<?> container =new MySQLContainer<>("mysql:8.0");
+		MySQLContainer<?> container = new MySQLContainer<>("mysql:8.0");
 		container.start();
 
 		return container;
