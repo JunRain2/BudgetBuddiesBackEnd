@@ -10,6 +10,6 @@ import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 	@Modifying
-	@Query("UPDATE Expense e SET e.category = NULL WHERE e.category =: category")
+	@Query("UPDATE Expense e SET e.category = NULL WHERE e.category = :category")
 	void clearCategoryReference(@Param("category") Category category);
 }

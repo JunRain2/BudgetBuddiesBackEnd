@@ -58,4 +58,8 @@ public class ConsumptionGoal extends BaseEntity {
 	public static ConsumptionGoal of(User user, Category category, Integer cap, YearMonth yearMonth) {
 		return new ConsumptionGoal(user, category, cap, yearMonth);
 	}
+
+	public void setCap(Integer cap) {
+		this.cap = cap;
+	}
 }

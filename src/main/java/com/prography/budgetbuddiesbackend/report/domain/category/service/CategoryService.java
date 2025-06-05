@@ -17,10 +17,10 @@ import com.prography.budgetbuddiesbackend.report.domain.category.exception.NotFo
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.UnmodifiableCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
-import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.ConsumptionGoalService;
+import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseService;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
+import com.prography.budgetbuddiesbackend.report.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,12 +28,12 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @Service
 public class CategoryService {
-	private final UserRepository userRepository;
 	private final CategoryRepository categoryRepository;
-	private final ConsumptionGoalRepository consumptionGoalRepository;
-	private final ExpenseRepository expenseRepository;
-
 	private final CategoryMapper mapper;
+
+	private final UserService userService;
+	private final ConsumptionGoalService consumptionGoalService;
+	private final ExpenseService expenseService;
 
 	/**
 	 * 사용자의 요청을 바탕으로 새 카테고리를 생성합니다.
@@ -43,12 +43,12 @@ public class CategoryService {
 	public void registerCategory(RegisterCategoryRequest request, Long userId) {
 		validateCategoryCreatable(request.name(), userId);
 
-		User user = userRepository.getReferenceById(userId);
+		User user = userService.findById(userId);
 		Category newCategory = mapper.registerCategoryRequestToEntity(request, user);
 		newCategory = categoryRepository.save(newCategory);
 
 		ConsumptionGoal newConsumptionGoal = newCategory.createInitialGoal(YearMonth.now());
-		consumptionGoalRepository.save(newConsumptionGoal);
+		consumptionGoalService.save(newConsumptionGoal);
 	}
 
 	private void validateCategoryCreatable(String categoryName, Long userId) {
@@ -67,14 +67,13 @@ public class CategoryService {
 	 * - 마지막으로 카테고리를 소프트 삭제합니다.
 	 */
 	public void deleteCategory(Long categoryId, Long userId) {
-		Category category = categoryRepository.findById(categoryId).orElseThrow(NotFoundCategoryException::new);
+		Category category = findById(categoryId);
 		validateCategoryModifiable(userId, category);
 
 		// 카테고리가 삭제됨에 따라서, 소비목표도 함께 삭제되어야 함, 그리고 소비내역 또한 같이 삭제되어야 함.
-		List<ConsumptionGoal> consumptionGoals = consumptionGoalRepository.findByCategory(category);
-		consumptionGoalRepository.deleteAll(consumptionGoals);
+		consumptionGoalService.deleteAllByCategory(category);
 
-		expenseRepository.clearCategoryReference(category);
+		expenseService.clearCategoryReference(category);
 
 		categoryRepository.delete(category);
 	}
@@ -89,5 +88,9 @@ public class CategoryService {
 		List<Category> userCategories = categoryRepository.findUserCategoriesByUserIdOrType(userId, DEFAULT);
 
 		return userCategories.stream().map(mapper::entityToUserCategoryResponse).toList();
+	}
+
+	public Category findById(Long categoryId) {
+		return categoryRepository.findById(categoryId).orElseThrow(NotFoundCategoryException::new);
 	}
 }
