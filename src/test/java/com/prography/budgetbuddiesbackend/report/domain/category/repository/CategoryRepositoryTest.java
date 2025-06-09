@@ -8,13 +8,13 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.prography.budgetbuddiesbackend.common.AbstractIntegrationTest;
+import com.prography.budgetbuddiesbackend.common.RepositoryTest;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryType;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
-@AbstractIntegrationTest
+@RepositoryTest
 class CategoryRepositoryTest {
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -38,8 +38,7 @@ class CategoryRepositoryTest {
 		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(user1.getId(), CategoryType.DEFAULT);
 
 		// then
-		assertThat(result).contains(user1CategoryName);
-		assertThat(result).doesNotContain(user2CategoryName);
+		assertThat(result).contains(user1CategoryName).doesNotContain(user2CategoryName);
 	}
 
 	@Test
@@ -80,7 +79,7 @@ class CategoryRepositoryTest {
 		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
 
 		// then
-		assertThat(result).doesNotContain("삭제될카테고리");
+		assertThat(result).isNotEmpty().doesNotContain("삭제될카테고리");
 	}
 
 	@Test
@@ -155,6 +154,7 @@ class CategoryRepositoryTest {
 		// when
 		List<Category> result = categoryRepository.findUserCategoriesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
 		// then
-		assertThat(result.stream().map(Category::getName)).doesNotContain("삭제될카테고리");
+		List<String> categoryNames = result.stream().map(Category::getName).toList();
+		assertThat(categoryNames).isNotEmpty().doesNotContain("삭제될카테고리");
 	}
 }

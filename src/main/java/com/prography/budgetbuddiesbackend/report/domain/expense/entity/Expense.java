@@ -3,8 +3,8 @@ package com.prography.budgetbuddiesbackend.report.domain.expense.entity;
 import java.time.LocalDate;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
+import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,8 +53,7 @@ public class Expense extends BaseEntity {
 	@Column(name = "expense_at", nullable = false)
 	private LocalDate expenseAt;
 
-	private Expense(User user, Category category, Integer amount, String description,
-		LocalDate expenseAt) {
+	private Expense(User user, Category category, Integer amount, String description, LocalDate expenseAt) {
 		this.user = user;
 		this.category = category;
 		this.amount = amount;
@@ -62,8 +61,12 @@ public class Expense extends BaseEntity {
 		this.expenseAt = expenseAt;
 	}
 
-	public static Expense of(User user, Category category, Integer amount, String description,
-		LocalDate expenseAt) {
+	public static Expense of(User user, Category category, Integer amount, String description, LocalDate expenseAt) {
 		return new Expense(user, category, amount, description, expenseAt);
+	}
+
+	public void update(Category category, LocalDate expenseAt) {
+		this.category = category;
+		this.expenseAt = expenseAt;
 	}
 }
