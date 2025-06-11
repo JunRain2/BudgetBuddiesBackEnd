@@ -17,10 +17,8 @@ import com.prography.budgetbuddiesbackend.report.domain.category.exception.Dupli
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.UnmodifiableCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.ConsumptionGoalDomainService;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
-import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseDomainService;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
@@ -28,12 +26,6 @@ import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepo
 class CategoryServiceIntegrationTest {
 	@Autowired
 	CategoryService categoryService;
-	@Autowired
-	CategoryDomainService categoryDomainService;
-	@Autowired
-	ExpenseDomainService expenseDomainService;
-	@Autowired
-	ConsumptionGoalDomainService consumptionGoalDomainService;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -52,10 +44,7 @@ class CategoryServiceIntegrationTest {
 		categoryService.registerCategory(req, user.getId());
 		List<UserCategoryResponse> categories = categoryService.findUserCategories(user.getId());
 		// then
-		UserCategoryResponse 식비카테고리 = categories.stream()
-			.filter(c -> c.name().equals("식비"))
-			.findFirst()
-			.orElseThrow();
+		UserCategoryResponse 식비카테고리 = categories.stream().filter(c -> c.name().equals("식비")).findFirst().orElseThrow();
 		Category categoryEntity = categoryRepository.findById(식비카테고리.categoryId()).orElseThrow();
 		assertThat(식비카테고리.name()).isEqualTo("식비");
 		assertThat(consumptionGoalRepository.findByCategory(categoryEntity)

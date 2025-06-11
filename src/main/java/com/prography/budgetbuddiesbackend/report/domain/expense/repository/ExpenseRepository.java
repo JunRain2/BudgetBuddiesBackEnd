@@ -8,8 +8,10 @@ import org.springframework.data.repository.query.Param;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 
-public interface ExpenseRepository extends JpaRepository<Expense, Long> {
+public interface ExpenseRepository extends JpaRepository<Expense, Long>, ExpenseQueryRepository {
 	@Modifying
 	@Query("UPDATE Expense e SET e.category = :uncategorized WHERE e.category = :deletedCategory")
-	void clearCategoryReference(@Param("deletedCategory") Category deletedCategory, @Param("uncategorized") Category uncategorized);
+	void clearCategoryReference(@Param("deletedCategory") Category deletedCategory,
+		@Param("uncategorized") Category uncategorized);
+
 }
