@@ -16,7 +16,8 @@ import static org.mockito.BDDMockito.*;
 
 class CategoryDomainServiceTest {
     @Mock CategoryRepository categoryRepository;
-    @InjectMocks CategoryDomainService categoryDomainService;
+    @InjectMocks
+    CategoryServiceImpl categoryDomainService;
 
     @BeforeEach
     void setUp() {

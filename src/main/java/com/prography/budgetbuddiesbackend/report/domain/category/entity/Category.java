@@ -1,8 +1,11 @@
 package com.prography.budgetbuddiesbackend.report.domain.category.entity;
 
+import static com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryType.*;
+
 import java.time.YearMonth;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
+import com.prography.budgetbuddiesbackend.report.domain.category.exception.UnmodifiableCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
@@ -60,5 +63,11 @@ public class Category extends BaseEntity {
 	public ConsumptionGoal createInitialGoal(YearMonth yearMonth) {
 		final Integer initialCap = 200000;
 		return ConsumptionGoal.of(this.user, this, initialCap, yearMonth);
+	}
+
+	public void validateModifiable(Long userId) {
+		if (DEFAULT.equals(this.getType()) || !this.getUser().getId().equals(userId)) {
+			throw new UnmodifiableCategoryException();
+		}
 	}
 }

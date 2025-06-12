@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.prography.budgetbuddiesbackend.common.ServiceIntegrationTest;
-import com.prography.budgetbuddiesbackend.report.domain.category.dto.request.RegisterCategoryRequest;
-import com.prography.budgetbuddiesbackend.report.domain.category.dto.response.UserCategoryResponse;
+import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.request.RegisterCategoryRequest;
+import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.response.UserCategoryResponse;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryType;
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.DuplicateCategoryNameException;
@@ -23,9 +23,9 @@ import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
 @ServiceIntegrationTest
-class CategoryServiceIntegrationTest {
+class CategoryFacadeServiceIntegrationTest {
 	@Autowired
-	CategoryService categoryService;
+	CategoryFacadeService categoryFacadeService;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -41,8 +41,8 @@ class CategoryServiceIntegrationTest {
 		User user = userRepository.save(User.of());
 		RegisterCategoryRequest req = new RegisterCategoryRequest("식비");
 		// when
-		categoryService.registerCategory(req, user.getId());
-		List<UserCategoryResponse> categories = categoryService.findUserCategories(user.getId());
+		categoryFacadeService.registerCategory(req, user.getId());
+		List<UserCategoryResponse> categories = categoryFacadeService.findUserCategories(user.getId());
 		// then
 		UserCategoryResponse 식비카테고리 = categories.stream().filter(c -> c.name().equals("식비")).findFirst().orElseThrow();
 		Category categoryEntity = categoryRepository.findById(식비카테고리.categoryId()).orElseThrow();
@@ -57,9 +57,9 @@ class CategoryServiceIntegrationTest {
 		// given
 		User user = userRepository.save(User.of());
 		RegisterCategoryRequest req = new RegisterCategoryRequest("교통");
-		categoryService.registerCategory(req, user.getId());
+		categoryFacadeService.registerCategory(req, user.getId());
 		// when & then
-		assertThatThrownBy(() -> categoryService.registerCategory(req, user.getId())).isInstanceOf(
+		assertThatThrownBy(() -> categoryFacadeService.registerCategory(req, user.getId())).isInstanceOf(
 			DuplicateCategoryNameException.class);
 	}
 
@@ -69,7 +69,7 @@ class CategoryServiceIntegrationTest {
 		User user = userRepository.save(User.of());
 		Category 기본카테고리 = categoryRepository.findUserCategoriesByUserIdOrType(null, CategoryType.DEFAULT).get(0);
 		// when & then
-		assertThatThrownBy(() -> categoryService.deleteCategory(기본카테고리.getId(), user.getId())).isInstanceOf(
+		assertThatThrownBy(() -> categoryFacadeService.deleteCategory(기본카테고리.getId(), user.getId())).isInstanceOf(
 			UnmodifiableCategoryException.class);
 	}
 
@@ -78,7 +78,7 @@ class CategoryServiceIntegrationTest {
 		// given
 		User user = userRepository.save(User.of());
 		RegisterCategoryRequest req = new RegisterCategoryRequest("여행");
-		categoryService.registerCategory(req, user.getId());
+		categoryFacadeService.registerCategory(req, user.getId());
 		Category category = categoryRepository.findAll()
 			.stream()
 			.filter(c -> "여행".equals(c.getName()))
@@ -86,7 +86,7 @@ class CategoryServiceIntegrationTest {
 			.get();
 		Expense expense = expenseRepository.save(Expense.of(user, category, 10000, "여행비", LocalDate.now()));
 		// when
-		categoryService.deleteCategory(category.getId(), user.getId());
+		categoryFacadeService.deleteCategory(category.getId(), user.getId());
 		// then
 		Expense updated = expenseRepository.findById(expense.getId()).get();
 		assertThat(updated.getCategory().getId()).isEqualTo(1L);

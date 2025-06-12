@@ -1,9 +1,9 @@
 package com.prography.budgetbuddiesbackend.report.domain.category.controller;
 
 import com.prography.budgetbuddiesbackend.common.response.ApiResponse;
-import com.prography.budgetbuddiesbackend.report.domain.category.dto.request.RegisterCategoryRequest;
-import com.prography.budgetbuddiesbackend.report.domain.category.dto.response.UserCategoryResponse;
-import com.prography.budgetbuddiesbackend.report.domain.category.service.CategoryService;
+import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.request.RegisterCategoryRequest;
+import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.response.UserCategoryResponse;
+import com.prography.budgetbuddiesbackend.report.domain.category.service.CategoryFacadeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +15,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    private final CategoryFacadeService categoryFacadeService;
 
     // 카테고리 생성
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> createCategory(@RequestBody RegisterCategoryRequest request,
                                                            @RequestParam Long userId) {
-        categoryService.registerCategory(request, userId);
+        categoryFacadeService.registerCategory(request, userId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -29,14 +29,14 @@ public class CategoryController {
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long categoryId,
                                                            @RequestParam Long userId) {
-        categoryService.deleteCategory(categoryId, userId);
+        categoryFacadeService.deleteCategory(categoryId, userId);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
     // 사용자 카테고리 전체 조회
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserCategoryResponse>>> getUserCategories(@RequestParam Long userId) {
-        List<UserCategoryResponse> categories = categoryService.findUserCategories(userId);
+        List<UserCategoryResponse> categories = categoryFacadeService.findUserCategories(userId);
         return ResponseEntity.ok(ApiResponse.success(categories));
     }
 } 
