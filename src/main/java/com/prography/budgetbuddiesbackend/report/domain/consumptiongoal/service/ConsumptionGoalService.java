@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.UserConsumptionGoalResponse;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.exception.NotFoundConsumptionGoalException;
-import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseDomainService;
+import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseServiceImpl;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class ConsumptionGoalService {
 	private final ConsumptionGoalDomainService consumptionGoalDomainService;
 	private final ConsumptionGoalMapper mapper;
 
-	private final ExpenseDomainService expenseService;
+	private final ExpenseServiceImpl expenseService;
 
 	/**
 	 * 사용자, 연월 기준 소비목표와 카테고리별 월 소비합계 조회

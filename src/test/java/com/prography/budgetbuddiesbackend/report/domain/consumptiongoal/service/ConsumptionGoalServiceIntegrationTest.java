@@ -16,7 +16,7 @@ import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.C
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
-import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseDomainService;
+import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseServiceImpl;
 
 @ServiceIntegrationTest
 class ConsumptionGoalServiceIntegrationTest {
@@ -29,7 +29,7 @@ class ConsumptionGoalServiceIntegrationTest {
 	@Autowired
 	CategoryRepository categoryRepository;
 	@Autowired
-	ExpenseDomainService expenseService;
+	ExpenseServiceImpl expenseService;
 
 	@Test
 	void 사용자와_연월로_소비목표_조회_정상_및_경계() {

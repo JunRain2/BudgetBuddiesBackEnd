@@ -20,13 +20,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ExpenseDomainService {
+public class ExpenseServiceImpl implements ExpenseService {
 	private final ExpenseRepository expenseRepository;
 
 	public Expense save(Expense expense) {
 		return expenseRepository.save(expense);
 	}
 
+	// TODO 현재까지는 Category에서만 필요로 하기에 ExpenseService에서 제외
+	// 해당 메서드를 호출할 때, Cateogry를 변경할 권한이 있는지는 호출하는 쪽에서 검증한다.
 	public void reassignCategory(Category deletedCategory, Category uncategorized) {
 		expenseRepository.clearCategoryReference(deletedCategory, uncategorized);
 	}
@@ -39,6 +41,7 @@ public class ExpenseDomainService {
 		return expenseRepository.findById(id).orElseThrow(NotFoundExpenseException::new);
 	}
 
+	// TODO 리팩토링
 	public Map<Long, Integer> getCategorySpendingByUserAndMonth(User user, YearMonth yearMonth) {
 		List<SumAmountGroupByCategoryResponse> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
 			user.getId(),

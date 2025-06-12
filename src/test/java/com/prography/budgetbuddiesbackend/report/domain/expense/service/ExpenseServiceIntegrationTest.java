@@ -20,7 +20,7 @@ import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepo
 @ServiceIntegrationTest
 class ExpenseServiceIntegrationTest {
 	@Autowired
-	ExpenseService expenseService;
+	ExpenseFacadeService expenseService;
 	@Autowired
 	ExpenseRepository expenseRepository;
 	@Autowired

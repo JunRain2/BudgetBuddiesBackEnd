@@ -17,7 +17,8 @@ import static org.mockito.BDDMockito.*;
 
 class ExpenseDomainServiceTest {
     @Mock ExpenseRepository expenseRepository;
-    @InjectMocks ExpenseDomainService expenseDomainService;
+    @InjectMocks
+    ExpenseServiceImpl expenseDomainService;
 
     @BeforeEach
     void setUp() {

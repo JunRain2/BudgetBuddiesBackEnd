@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
+import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotRegisterExpenseException;
+import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotUpdateExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -62,11 +64,31 @@ public class Expense extends BaseEntity {
 	}
 
 	public static Expense of(User user, Category category, Integer amount, String description, LocalDate expenseAt) {
+		LocalDate now = LocalDate.now();
+		if (now.isBefore(expenseAt) || amount <= 0) {
+			throw new NotRegisterExpenseException();
+		}
+
 		return new Expense(user, category, amount, description, expenseAt);
 	}
 
 	public void update(Category category, LocalDate expenseAt) {
 		this.category = category;
 		this.expenseAt = expenseAt;
+	}
+
+	public void validateOwner(Long userId) {
+		if (!this.user.getId().equals(userId)) {
+			throw new NotUpdateExpenseException();
+		}
+	}
+
+	public void validateModifiable(Long userId, LocalDate expenseAt) {
+		validateOwner(userId);
+
+		LocalDate now = LocalDate.now();
+		if (now.isBefore(expenseAt)) {
+			throw new NotUpdateExpenseException();
+		}
 	}
 }
