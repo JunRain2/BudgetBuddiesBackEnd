@@ -26,7 +26,7 @@ public class ExpenseFacadeService implements ExpenseUseCase {
 	public void registerExpense(RegisterExpenseRequest request, Long userId) {
 		User user = userService.findById(userId);
 		Category category = categoryService.findById(request.categoryId());
-		Expense expense = mapper.registerEntityResponseToEntity(request, category, user);
+		Expense expense = mapper.requestToEntity(request, category, user);
 
 		expenseService.save(expense);
 	}

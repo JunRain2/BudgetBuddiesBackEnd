@@ -25,7 +25,7 @@ import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepo
 @ServiceIntegrationTest
 class CategoryFacadeServiceIntegrationTest {
 	@Autowired
-	CategoryFacadeService categoryFacadeService;
+	CategoryUseCase categoryFacadeService;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -91,5 +91,58 @@ class CategoryFacadeServiceIntegrationTest {
 		Expense updated = expenseRepository.findById(expense.getId()).get();
 		assertThat(updated.getCategory().getId()).isEqualTo(1L);
 		assertThat(consumptionGoalRepository.findByCategory(category)).isEmpty();
+	}
+
+	@Test
+	void 카테고리_이름이_1자일_때_정상_생성() {
+		// given
+		User user = userRepository.save(User.of());
+		RegisterCategoryRequest req = new RegisterCategoryRequest("가");
+		// when
+		categoryFacadeService.registerCategory(req, user.getId());
+		// then
+		List<UserCategoryResponse> categories = categoryFacadeService.getUserCategories(user.getId());
+		assertThat(categories.stream().map(UserCategoryResponse::name)).contains("가");
+	}
+
+	@Test
+	void 카테고리_이름이_20자일_때_정상_생성() {
+		// given
+		User user = userRepository.save(User.of());
+		RegisterCategoryRequest req = new RegisterCategoryRequest("가".repeat(20));
+		// when
+		categoryFacadeService.registerCategory(req, user.getId());
+		// then
+		List<UserCategoryResponse> categories = categoryFacadeService.getUserCategories(user.getId());
+		assertThat(categories.stream().map(UserCategoryResponse::name)).contains("가".repeat(20));
+	}
+
+	@Test
+	void 카테고리_이름이_21자일_때_생성_실패() {
+		// given
+		User user = userRepository.save(User.of());
+		RegisterCategoryRequest req = new RegisterCategoryRequest("가".repeat(21));
+		// when & then
+		assertThatThrownBy(() -> categoryFacadeService.registerCategory(req, user.getId()))
+			.isInstanceOf(Exception.class);
+	}
+
+	@Test
+	void 카테고리_이름이_빈문자열일_때_생성_실패() {
+		// given
+		User user = userRepository.save(User.of());
+		RegisterCategoryRequest req = new RegisterCategoryRequest("");
+		// when & then
+		assertThatThrownBy(() -> categoryFacadeService.registerCategory(req, user.getId()))
+			.isInstanceOf(Exception.class);
+	}
+
+	@Test
+	void 존재하지_않는_카테고리_삭제시_예외() {
+		// given
+		User user = userRepository.save(User.of());
+		// when & then
+		assertThatThrownBy(() -> categoryFacadeService.deleteCategory(-1L, user.getId()))
+			.isInstanceOf(Exception.class);
 	}
 } 

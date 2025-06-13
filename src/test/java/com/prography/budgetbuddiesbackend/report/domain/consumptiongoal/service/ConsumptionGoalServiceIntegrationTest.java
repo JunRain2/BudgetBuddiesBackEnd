@@ -13,17 +13,17 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.UserConsumptionGoalResponse;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseServiceImpl;
+import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
+import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
 @ServiceIntegrationTest
 class ConsumptionGoalServiceIntegrationTest {
 	@Autowired
-	ConsumptionGoalFacadeService consumptionGoalService;
+	ConsumptionGoalUseCase consumptionGoalService;
 	@Autowired
-	ConsumptionGoalServiceImpl consumptionGoalDomainService;
+	ConsumptionGoalService consumptionGoalDomainService;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -57,8 +57,8 @@ class ConsumptionGoalServiceIntegrationTest {
 		YearMonth futureMonth = YearMonth.now().plusMonths(1);
 
 		// when & then
-		assertThatThrownBy(() -> consumptionGoalService.getUserConsumptionGoalsByMonth(user, futureMonth))
-			.isInstanceOf(RuntimeException.class); // 실제 예외 타입에 맞게 수정
+		assertThatThrownBy(() -> consumptionGoalService.getUserConsumptionGoalsByMonth(user, futureMonth)).isInstanceOf(
+			RuntimeException.class);
 	}
 
 	@Test
@@ -76,6 +76,7 @@ class ConsumptionGoalServiceIntegrationTest {
 
 	@Test
 	void 여러_카테고리_여러_목표_정상_조회() {
+		// given
 		User user = userRepository.save(User.of());
 		Category cat1 = categoryRepository.save(Category.of(user, "식비"));
 		Category cat2 = categoryRepository.save(Category.of(user, "교통"));
@@ -83,14 +84,18 @@ class ConsumptionGoalServiceIntegrationTest {
 		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat1, 10000, month));
 		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat2, 20000, month));
 
+		// when
 		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
 
+		// then
 		assertThat(result).hasSize(2);
-		assertThat(result.stream().map(UserConsumptionGoalResponse::categoryName)).containsExactlyInAnyOrder("식비", "교통");
+		assertThat(result.stream().map(UserConsumptionGoalResponse::categoryName)).containsExactlyInAnyOrder("식비",
+			"교통");
 	}
 
 	@Test
 	void 소비금액이_목표금액보다_클_경우_remainingAmount_음수() {
+		// given
 		User user = userRepository.save(User.of());
 		Category cat = categoryRepository.save(Category.of(user, "식비"));
 		YearMonth month = YearMonth.of(2024, 6);
@@ -99,19 +104,26 @@ class ConsumptionGoalServiceIntegrationTest {
 		Expense expense = Expense.of(user, cat, 15000, "초과지출", month.atDay(10));
 		expenseService.save(expense);
 
+		// when
 		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
+
+		// then
 		assertThat(result).hasSize(1);
 		assertThat(result.get(0).remainingAmount()).isEqualTo(-5000);
 	}
 
 	@Test
 	void 소비금액이_0원인_경우_remainingAmount는_cap과_같다() {
+		// given
 		User user = userRepository.save(User.of());
 		Category cat = categoryRepository.save(Category.of(user, "식비"));
 		YearMonth month = YearMonth.of(2024, 6);
 		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat, 10000, month));
 
+		// when
 		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
+
+		// then
 		assertThat(result).hasSize(1);
 		assertThat(result.get(0).totalSpent()).isZero();
 		assertThat(result.get(0).remainingAmount()).isEqualTo(10000);
@@ -119,6 +131,7 @@ class ConsumptionGoalServiceIntegrationTest {
 
 	@Test
 	void 여러_유저가_있을때_본인것만_조회된다() {
+		// given
 		User user1 = userRepository.save(User.of());
 		User user2 = userRepository.save(User.of());
 		Category cat1 = categoryRepository.save(Category.of(user1, "식비"));
@@ -127,9 +140,11 @@ class ConsumptionGoalServiceIntegrationTest {
 		consumptionGoalDomainService.save(ConsumptionGoal.of(user1, cat1, 10000, month));
 		consumptionGoalDomainService.save(ConsumptionGoal.of(user2, cat2, 20000, month));
 
+		// when
 		List<UserConsumptionGoalResponse> result1 = consumptionGoalService.getUserConsumptionGoalsByMonth(user1, month);
 		List<UserConsumptionGoalResponse> result2 = consumptionGoalService.getUserConsumptionGoalsByMonth(user2, month);
 
+		// then
 		assertThat(result1).hasSize(1);
 		assertThat(result1.get(0).categoryName()).isEqualTo("식비");
 		assertThat(result2).hasSize(1);
@@ -138,6 +153,7 @@ class ConsumptionGoalServiceIntegrationTest {
 
 	@Test
 	void 카테고리별로_소비금액이_정확히_집계된다() {
+		// given
 		User user = userRepository.save(User.of());
 		Category cat1 = categoryRepository.save(Category.of(user, "식비"));
 		Category cat2 = categoryRepository.save(Category.of(user, "교통"));
@@ -145,15 +161,22 @@ class ConsumptionGoalServiceIntegrationTest {
 		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat1, 10000, month));
 		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat2, 20000, month));
 		// 식비 3000, 교통 5000
-		expenseService.save(
-			com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense.of(user, cat1, 3000, "식비지출", month.atDay(5)));
-		expenseService.save(
-			com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense.of(user, cat2, 5000, "교통지출", month.atDay(10)));
+		expenseService.save(Expense.of(user, cat1, 3000, "식비지출", month.atDay(5)));
+		expenseService.save(Expense.of(user, cat2, 5000, "교통지출", month.atDay(10)));
 
+		// when
 		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
+
+		// then
 		assertThat(result).hasSize(2);
-		UserConsumptionGoalResponse 식비 = result.stream().filter(r -> r.categoryName().equals("식비")).findFirst().orElseThrow();
-		UserConsumptionGoalResponse 교통 = result.stream().filter(r -> r.categoryName().equals("교통")).findFirst().orElseThrow();
+		UserConsumptionGoalResponse 식비 = result.stream()
+			.filter(r -> r.categoryName().equals("식비"))
+			.findFirst()
+			.orElseThrow();
+		UserConsumptionGoalResponse 교통 = result.stream()
+			.filter(r -> r.categoryName().equals("교통"))
+			.findFirst()
+			.orElseThrow();
 		assertThat(식비.totalSpent()).isEqualTo(3000);
 		assertThat(교통.totalSpent()).isEqualTo(5000);
 	}

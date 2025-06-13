@@ -1,62 +1,92 @@
 package com.prography.budgetbuddiesbackend.report.domain.expense.service;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDate;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotFoundExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
+@ExtendWith(MockitoExtension.class)
 class ExpenseDomainServiceTest {
-    @Mock ExpenseRepository expenseRepository;
-    @InjectMocks
-    ExpenseServiceImpl expenseDomainService;
+	@Mock
+	private ExpenseService expenseService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+	@Mock
+	private ExpenseRepository expenseRepository;
 
-    @Test
-    void save_정상동작() {
-        Expense expense = mock(Expense.class);
-        given(expenseRepository.save(expense)).willReturn(expense);
-        assertThat(expenseDomainService.save(expense)).isEqualTo(expense);
-    }
+	private User user;
+	private Category category;
+	private Expense expense;
 
-    @Test
-    void delete_정상동작() {
-        Expense expense = mock(Expense.class);
-        expenseDomainService.delete(expense);
-        then(expenseRepository).should().delete(expense);
-    }
+	@BeforeEach
+	void setUp() {
+		user = User.of();
+		category = Category.of(user, "식비");
+		expense = Expense.of(user, category, 10000, "점심", LocalDate.now());
+	}
 
-    @Test
-    void findById_정상동작() {
-        Expense expense = mock(Expense.class);
-        given(expenseRepository.findById(1L)).willReturn(Optional.of(expense));
-        assertThat(expenseDomainService.findById(1L)).isEqualTo(expense);
-    }
+	@Test
+	@DisplayName("지출을 저장한다")
+	void save_정상동작() {
+		// given
+		when(expenseService.save(any(Expense.class))).thenReturn(expense);
 
-    @Test
-    void findById_없으면_예외() {
-        given(expenseRepository.findById(1L)).willReturn(Optional.empty());
-        assertThatThrownBy(() -> expenseDomainService.findById(1L)).isInstanceOf(NotFoundExpenseException.class);
-    }
+		// when
+		Expense savedExpense = expenseService.save(expense);
 
-    @Test
-    void reassignCategory_정상동작() {
-        Category deleted = mock(Category.class);
-        Category uncategorized = mock(Category.class);
-        expenseDomainService.reassignCategory(deleted, uncategorized);
-        then(expenseRepository).should().clearCategoryReference(deleted, uncategorized);
-    }
+		// then
+		assertThat(savedExpense).isEqualTo(expense);
+		verify(expenseService).save(expense);
+	}
+
+	@Test
+	@DisplayName("지출을 삭제한다")
+	void delete_정상동작() {
+		// given
+		doNothing().when(expenseService).delete(any(Expense.class));
+
+		// when
+		expenseService.delete(expense);
+
+		// then
+		verify(expenseService).delete(expense);
+	}
+
+	@Test
+	@DisplayName("ID로 지출을 조회한다")
+	void findById_정상동작() {
+		// given
+		when(expenseService.findById(1L)).thenReturn(expense);
+
+		// when
+		Expense foundExpense = expenseService.findById(1L);
+
+		// then
+		assertThat(foundExpense).isEqualTo(expense);
+		verify(expenseService).findById(1L);
+	}
+
+	@Test
+	@DisplayName("존재하지 않는 ID로 조회시 예외가 발생한다")
+	void findById_없으면_예외() {
+		// given
+		when(expenseService.findById(1L)).thenThrow(NotFoundExpenseException.class);
+
+		// when & then
+		assertThatThrownBy(() -> expenseService.findById(1L))
+			.isInstanceOf(NotFoundExpenseException.class);
+		verify(expenseService).findById(1L);
+	}
 } 

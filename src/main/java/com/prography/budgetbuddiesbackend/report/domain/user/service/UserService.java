@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
+import com.prography.budgetbuddiesbackend.report.domain.user.exception.UserNotFoundException;
 import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,6 @@ public class UserService {
 	 * @throws UserNotFoundException 사용자가 존재하지 않는 경우
 	 */
 	public User findById(Long id) {
-		return userRepository.findById(id)
-			.orElseThrow(() -> new UserNotFoundException(id));
+		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 	}
 }
