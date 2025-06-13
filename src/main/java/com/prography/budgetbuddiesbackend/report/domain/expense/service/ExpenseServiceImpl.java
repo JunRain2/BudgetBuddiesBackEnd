@@ -40,7 +40,6 @@ public class ExpenseServiceImpl implements ExpenseService, CategoryExpenseServic
 		return expenseRepository.findById(id).orElseThrow(NotFoundExpenseException::new);
 	}
 
-	// 해당 메서드를 호출할 때, Cateogry를 변경할 권한이 있는지는 호출하는 쪽에서 검증한다.
 	@Override
 	public void reassignCategory(Category deletedCategory, Category uncategorized) {
 		expenseRepository.clearCategoryReference(deletedCategory, uncategorized);

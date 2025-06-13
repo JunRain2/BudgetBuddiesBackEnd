@@ -7,7 +7,19 @@ import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.C
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 public interface ConsumptionGoalService {
+	/**
+	 * 소비 목표를 저장합니다.
+	 * @param goal 저장할 소비 목표
+	 * @return 저장된 소비 목표
+	 * @throws IllegalArgumentException 목표 금액이 0 이하인 경우
+	 */
 	ConsumptionGoal save(ConsumptionGoal goal);
 
+	/**
+	 * 사용자의 특정 월 소비 목표를 조회합니다.
+	 * @param user 사용자
+	 * @param yearMonth 조회할 년월
+	 * @return 소비 목표 목록
+	 */
 	List<ConsumptionGoal> getByUserAndYearMonth(User user, YearMonth yearMonth);
 }
