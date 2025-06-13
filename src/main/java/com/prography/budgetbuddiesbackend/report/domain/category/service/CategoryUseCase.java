@@ -10,6 +10,6 @@ public interface CategoryUseCase {
 
 	void deleteCategory(Long categoryId, Long userId);
 
-	List<UserCategoryResponse> findUserCategories(Long userId);
+	List<UserCategoryResponse> getUserCategories(Long userId);
 }
 

@@ -36,7 +36,7 @@ public class CategoryController {
     // 사용자 카테고리 전체 조회
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserCategoryResponse>>> getUserCategories(@RequestParam Long userId) {
-        List<UserCategoryResponse> categories = categoryFacadeService.findUserCategories(userId);
+        List<UserCategoryResponse> categories = categoryFacadeService.getUserCategories(userId);
         return ResponseEntity.ok(ApiResponse.success(categories));
     }
 } 

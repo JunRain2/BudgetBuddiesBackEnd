@@ -13,9 +13,7 @@ public class ConsumptionGoalMapper {
 			consumptionGoal.getId(),
 			consumptionGoal.getCategory().getName(),
 			consumptionGoal.getCap(),
-			totalSpent,
-			consumptionGoal.getCap() - totalSpent
+			totalSpent
 		);
 	}
-
 }

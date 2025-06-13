@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.domain.expense.dto.request;
+package com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request;
 
 import java.time.LocalDate;
 

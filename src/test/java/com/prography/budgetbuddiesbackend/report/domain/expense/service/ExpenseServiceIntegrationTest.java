@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.prography.budgetbuddiesbackend.common.ServiceIntegrationTest;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
-import com.prography.budgetbuddiesbackend.report.domain.expense.dto.request.RegisterExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.RegisterExpenseRequest;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotRegisterExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;

@@ -1,7 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller;
 
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.UserConsumptionGoalResponse;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.ConsumptionGoalService;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.ConsumptionGoalFacadeService;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/consumption-goals")
 @RequiredArgsConstructor
 public class ConsumptionGoalController {
-    private final ConsumptionGoalService consumptionGoalService;
+    private final ConsumptionGoalFacadeService consumptionGoalService;
     private final UserService userService;
 
     @GetMapping

@@ -10,8 +10,6 @@ import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.
 import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.response.UserCategoryResponse;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.ConsumptionGoalDomainService;
-import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseServiceImpl;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.service.UserService;
 
@@ -20,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class CategoryFacadeService implements CategoryUseCase{
+public class CategoryFacadeService implements CategoryUseCase {
 	private final CategoryService categoryService;
 	private final CategoryMapper mapper;
 
-	private final ExpenseServiceImpl expenseDomainService;
-	private final ConsumptionGoalDomainService consumptionGoalDomainService;
+	private final CategoryExpenseService expenseService;
+	private final CategoryConsumptionGoalService consumptionGoalService;
 	private final UserService userService;
 
 	public void registerCategory(RegisterCategoryRequest request, Long userId) {
@@ -35,23 +33,23 @@ public class CategoryFacadeService implements CategoryUseCase{
 
 		YearMonth now = YearMonth.now();
 		ConsumptionGoal newConsumptionGoal = newCategory.createInitialGoal(now);
-		consumptionGoalDomainService.save(newConsumptionGoal);
+		consumptionGoalService.save(newConsumptionGoal);
 	}
 
 	public void deleteCategory(Long categoryId, Long userId) {
 		Category deletedCategory = categoryService.findById(categoryId);
 		deletedCategory.validateModifiable(userId);
 
-		consumptionGoalDomainService.deleteAllByCategory(deletedCategory);
+		consumptionGoalService.deleteAllByCategory(deletedCategory);
 
 		Category uncategorizedCategory = categoryService.findUncategorizedCategory();
-		expenseDomainService.reassignCategory(deletedCategory, uncategorizedCategory);
+		expenseService.reassignCategory(deletedCategory, uncategorizedCategory);
 
 		categoryService.delete(deletedCategory);
 	}
 
 	@Transactional(readOnly = true)
-	public List<UserCategoryResponse> findUserCategories(Long userId) {
+	public List<UserCategoryResponse> getUserCategories(Long userId) {
 		List<Category> userCategories = categoryService.findUserCategories(userId);
 		return userCategories.stream().map(mapper::entityToUserCategoryResponse).toList();
 	}

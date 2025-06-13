@@ -5,8 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.service.CategoryService;
-import com.prography.budgetbuddiesbackend.report.domain.expense.dto.request.RegisterExpenseRequest;
-import com.prography.budgetbuddiesbackend.report.domain.expense.dto.request.UpdateExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.RegisterExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.UpdateExpenseRequest;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.service.UserService;
@@ -16,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ExpenseFacadeService implements ExpenseUseCase{
+public class ExpenseFacadeService implements ExpenseUseCase {
+	private final ExpenseService expenseService;
 	private final ExpenseMapper mapper;
 
 	private final CategoryService categoryService;
-	private final ExpenseService expenseService;
 	private final UserService userService;
 
 	public void registerExpense(RegisterExpenseRequest request, Long userId) {

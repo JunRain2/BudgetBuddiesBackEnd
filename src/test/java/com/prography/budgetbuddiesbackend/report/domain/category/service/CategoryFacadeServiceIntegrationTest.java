@@ -42,7 +42,7 @@ class CategoryFacadeServiceIntegrationTest {
 		RegisterCategoryRequest req = new RegisterCategoryRequest("식비");
 		// when
 		categoryFacadeService.registerCategory(req, user.getId());
-		List<UserCategoryResponse> categories = categoryFacadeService.findUserCategories(user.getId());
+		List<UserCategoryResponse> categories = categoryFacadeService.getUserCategories(user.getId());
 		// then
 		UserCategoryResponse 식비카테고리 = categories.stream().filter(c -> c.name().equals("식비")).findFirst().orElseThrow();
 		Category categoryEntity = categoryRepository.findById(식비카테고리.categoryId()).orElseThrow();

@@ -1,6 +1,6 @@
 package com.prography.budgetbuddiesbackend.report.domain.expense.repository.dto;
 
-public record SumAmountGroupByCategoryResponse(
+public record SumAmountGroupByCategoryResult(
 	Long categoryId,
 	Integer spendingMoney
 ) {

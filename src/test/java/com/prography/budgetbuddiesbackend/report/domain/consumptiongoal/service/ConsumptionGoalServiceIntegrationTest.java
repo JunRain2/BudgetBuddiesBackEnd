@@ -21,9 +21,9 @@ import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseS
 @ServiceIntegrationTest
 class ConsumptionGoalServiceIntegrationTest {
 	@Autowired
-	ConsumptionGoalService consumptionGoalService;
+	ConsumptionGoalFacadeService consumptionGoalService;
 	@Autowired
-	ConsumptionGoalDomainService consumptionGoalDomainService;
+	ConsumptionGoalServiceImpl consumptionGoalDomainService;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired

@@ -1,7 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.domain.expense.service;
 
-import com.prography.budgetbuddiesbackend.report.domain.expense.dto.request.RegisterExpenseRequest;
-import com.prography.budgetbuddiesbackend.report.domain.expense.dto.request.UpdateExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.RegisterExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.UpdateExpenseRequest;
 
 public interface ExpenseUseCase {
 	void registerExpense(RegisterExpenseRequest request, Long userId);

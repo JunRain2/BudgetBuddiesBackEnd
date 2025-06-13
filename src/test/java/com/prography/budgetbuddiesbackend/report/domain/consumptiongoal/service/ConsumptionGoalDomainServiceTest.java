@@ -16,7 +16,8 @@ import static org.mockito.BDDMockito.*;
 
 class ConsumptionGoalDomainServiceTest {
     @Mock ConsumptionGoalRepository consumptionGoalRepository;
-    @InjectMocks ConsumptionGoalDomainService consumptionGoalDomainService;
+    @InjectMocks
+    ConsumptionGoalServiceImpl consumptionGoalDomainService;
 
     @BeforeEach
     void setUp() {

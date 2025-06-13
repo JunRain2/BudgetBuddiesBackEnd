@@ -13,7 +13,7 @@ import com.prography.budgetbuddiesbackend.common.RepositoryTest;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
-import com.prography.budgetbuddiesbackend.report.domain.expense.repository.dto.SumAmountGroupByCategoryResponse;
+import com.prography.budgetbuddiesbackend.report.domain.expense.repository.dto.SumAmountGroupByCategoryResult;
 import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
@@ -43,7 +43,7 @@ class ExpenseRepositoryTest {
 		YearMonth yearMonth = YearMonth.of(2024, 6);
 
 		// when
-		List<SumAmountGroupByCategoryResponse> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
+		List<SumAmountGroupByCategoryResult> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
 			user.getId(), yearMonth.atDay(1), yearMonth.atEndOfMonth());
 
 		// then
@@ -59,7 +59,7 @@ class ExpenseRepositoryTest {
 	void 존재하지_않는_유저_조회시_빈_결과_반환() {
 		// when
 		YearMonth yearMonth = YearMonth.of(2024, 6);
-		List<SumAmountGroupByCategoryResponse> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
+		List<SumAmountGroupByCategoryResult> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
 			-1L, yearMonth.atDay(1), yearMonth.atEndOfMonth()
 		);
 
@@ -77,7 +77,7 @@ class ExpenseRepositoryTest {
 		YearMonth future = YearMonth.now().plusMonths(1);
 
 		// when
-		List<SumAmountGroupByCategoryResponse> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
+		List<SumAmountGroupByCategoryResult> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
 			user.getId(),
 			future.atDay(1),
 			future.atEndOfMonth()
