@@ -20,7 +20,6 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.DuplicateCategoryNameException;
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.NotFoundCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
@@ -30,20 +29,20 @@ class CategoryServiceTest {
 	@Mock
 	private CategoryRepository categoryRepository;
 
-	private User user;
+	private Long userId;
 	private Category category;
 
 	@BeforeEach
 	void setUp() {
-		user = User.of();
-		category = Category.of(user, "식비");
+		userId = 1L;
+		category = Category.of(userId, "식비");
 	}
 
 	@Test
 	@DisplayName("카테고리를 저장한다")
 	void save_정상동작() {
 		// given
-		when(categoryRepository.findAllCategoryNamesByUserIdOrType(user.getId(), CategoryType.DEFAULT))
+		when(categoryRepository.findAllCategoryNamesByUserIdOrType(userId, CategoryType.DEFAULT))
 			.thenReturn(Set.of());
 		when(categoryRepository.save(any(Category.class))).thenReturn(category);
 
@@ -59,7 +58,7 @@ class CategoryServiceTest {
 	@DisplayName("중복된 카테고리 이름으로 저장시 예외가 발생한다")
 	void save_중복이름_예외() {
 		// given
-		when(categoryRepository.findAllCategoryNamesByUserIdOrType(user.getId(), CategoryType.DEFAULT))
+		when(categoryRepository.findAllCategoryNamesByUserIdOrType(userId, CategoryType.DEFAULT))
 			.thenReturn(Set.of("식비"));
 
 		// when & then
@@ -112,22 +111,22 @@ class CategoryServiceTest {
 	void findUserCategories_정상동작() {
 		// given
 		List<Category> categories = List.of(category);
-		when(categoryRepository.findUserCategoriesByUserIdOrType(user.getId(), CategoryType.DEFAULT))
+		when(categoryRepository.findUserCategoriesByUserIdOrType(userId, CategoryType.DEFAULT))
 			.thenReturn(categories);
 
 		// when
-		List<Category> foundCategories = categoryService.findUserCategories(user.getId());
+		List<Category> foundCategories = categoryService.findUserCategories(userId);
 
 		// then
 		assertThat(foundCategories).isEqualTo(categories);
-		verify(categoryRepository).findUserCategoriesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
+		verify(categoryRepository).findUserCategoriesByUserIdOrType(userId, CategoryType.DEFAULT);
 	}
 
 	@Test
 	@DisplayName("미분류 카테고리를 조회한다")
 	void findUncategorizedCategory_정상동작() {
 		// given
-		Category uncategorized = Category.of(user, "카테고리 없음");
+		Category uncategorized = Category.of(userId, "카테고리 없음");
 		when(categoryRepository.findByName("카테고리 없음")).thenReturn(Optional.of(uncategorized));
 
 		// when

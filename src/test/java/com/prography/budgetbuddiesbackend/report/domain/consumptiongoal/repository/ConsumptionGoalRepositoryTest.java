@@ -12,30 +12,26 @@ import com.prography.budgetbuddiesbackend.common.RepositoryTest;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
 @RepositoryTest
 class ConsumptionGoalRepositoryTest {
 	@Autowired
 	ConsumptionGoalRepository consumptionGoalRepository;
 	@Autowired
-	UserRepository userRepository;
-	@Autowired
 	CategoryRepository categoryRepository;
 
 	@Test
 	void 사용자와_연월로_소비목표_정상_조회() {
 		// given
-		User user = userRepository.save(User.of());
-		Category category = categoryRepository.save(Category.of(user, "식비"));
+		Long userId = 1L;
+		Category category = categoryRepository.save(Category.of(userId, "식비"));
 		YearMonth month = YearMonth.of(2024, 6);
 
-		ConsumptionGoal goal = ConsumptionGoal.of(user, category, 10000, month);
+		ConsumptionGoal goal = ConsumptionGoal.of(userId, category, 10000, month);
 		consumptionGoalRepository.save(goal);
 
 		// when
-		List<ConsumptionGoal> result = consumptionGoalRepository.findByUserAndGoalMonthWithCategory(user, month);
+		List<ConsumptionGoal> result = consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, month);
 
 		// then
 		assertThat(result).hasSize(1);
@@ -46,19 +42,18 @@ class ConsumptionGoalRepositoryTest {
 	@Test
 	void 삭제된_소비목표는_조회되지_않음() {
 		// given
-		User user = userRepository.save(User.of());
-		Category category = categoryRepository.save(Category.of(user, "교통"));
+		Long userId = 1L;
+		Category category = categoryRepository.save(Category.of(userId, "교통"));
 		YearMonth month = YearMonth.of(2024, 6);
 
-		ConsumptionGoal goal = ConsumptionGoal.of(user, category, 5000, month);
+		ConsumptionGoal goal = ConsumptionGoal.of(userId, category, 5000, month);
 		goal = consumptionGoalRepository.save(goal);
 		consumptionGoalRepository.delete(goal);
 
 		// when
-		List<ConsumptionGoal> result = consumptionGoalRepository.findByUserAndGoalMonthWithCategory(user, month);
+		List<ConsumptionGoal> result = consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, month);
 
 		// then
 		assertThat(result).isEmpty();
 	}
-
 }

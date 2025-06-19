@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	private void validateCategoryCreatable(Category category) {
-		Set<String> userCategoryNames = findCategoryNamesByUser(category.getUser().getId());
+		Set<String> userCategoryNames = findCategoryNamesByUser(category.getUserId());
 		if (userCategoryNames.contains(category.getName())) {
 			throw new DuplicateCategoryNameException();
 		}

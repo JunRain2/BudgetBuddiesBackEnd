@@ -4,7 +4,6 @@ import java.time.YearMonth;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,9 +30,8 @@ public class ConsumptionGoal extends BaseEntity {
 	private Long id;
 
 	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	@Column(name = "user_id", nullable = false)
+	private Long userId;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -48,15 +46,15 @@ public class ConsumptionGoal extends BaseEntity {
 	@Column(name = "goal_month", nullable = false, columnDefinition = "CHAR(7)")
 	private YearMonth goalMonth;
 
-	private ConsumptionGoal(User user, Category category, Integer cap, YearMonth goalMonth) {
-		this.user = user;
+	private ConsumptionGoal(Long userId, Category category, Integer cap, YearMonth goalMonth) {
+		this.userId = userId;
 		this.category = category;
 		this.cap = cap;
 		this.goalMonth = goalMonth;
 	}
 
-	public static ConsumptionGoal of(User user, Category category, Integer cap, YearMonth yearMonth) {
-		return new ConsumptionGoal(user, category, cap, yearMonth);
+	public static ConsumptionGoal of(Long userId, Category category, Integer cap, YearMonth yearMonth) {
+		return new ConsumptionGoal(userId, category, cap, yearMonth);
 	}
 
 	public void setCap(Integer cap) {

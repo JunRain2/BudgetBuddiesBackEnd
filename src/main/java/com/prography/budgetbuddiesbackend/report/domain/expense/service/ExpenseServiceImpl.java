@@ -15,7 +15,6 @@ import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotFoundExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.dto.SumAmountGroupByCategoryResult;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,9 +45,9 @@ public class ExpenseServiceImpl implements ExpenseService, CategoryExpenseServic
 	}
 
 	@Override
-	public Map<Long, Integer> getTotalSpentByUserCategory(User user, YearMonth yearMonth) {
+	public Map<Long, Integer> getTotalSpentByUserCategory(Long userId, YearMonth yearMonth) {
 		List<SumAmountGroupByCategoryResult> results = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
-			user.getId(),
+			userId,
 			yearMonth.atDay(1),
 			yearMonth.atEndOfMonth()
 		);

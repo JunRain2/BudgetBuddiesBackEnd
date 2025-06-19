@@ -1,11 +1,11 @@
-package com.prography.budgetbuddiesbackend.report.domain.user.service;
+package com.prography.budgetbuddiesbackend.user.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.exception.UserNotFoundException;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
+import com.prography.budgetbuddiesbackend.user.entity.User;
+import com.prography.budgetbuddiesbackend.user.exception.UserNotFoundException;
+import com.prography.budgetbuddiesbackend.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,4 +24,4 @@ public class UserService {
 	public User findById(Long id) {
 		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 	}
-}
+} 

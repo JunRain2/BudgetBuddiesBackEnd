@@ -14,8 +14,6 @@ import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.r
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotRegisterExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
 @ServiceIntegrationTest
 class ExpenseServiceIntegrationTest {
@@ -24,35 +22,33 @@ class ExpenseServiceIntegrationTest {
 	@Autowired
 	ExpenseRepository expenseRepository;
 	@Autowired
-	UserRepository userRepository;
-	@Autowired
 	CategoryRepository categoryRepository;
 
 	@Test
 	void 금액이_0원일_때_등록_실패() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		Category category = categoryRepository.findAll().get(0);
 		RegisterExpenseRequest req = new RegisterExpenseRequest(category.getId(), 0, "테스트",
 			LocalDate.now().minusDays(1));
 		// when & then
-		assertThatThrownBy(() -> expenseService.registerExpense(req, user.getId()))
+		assertThatThrownBy(() -> expenseService.registerExpense(req, userId))
 			.isInstanceOf(NotRegisterExpenseException.class);
 	}
 
 	@Test
 	void 금액이_1원일_때_등록_성공() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		Category category = categoryRepository.findAll().get(0);
 		RegisterExpenseRequest req = new RegisterExpenseRequest(category.getId(), 1, "테스트",
 			LocalDate.now().minusDays(1));
 		// when
-		expenseService.registerExpense(req, user.getId());
+		expenseService.registerExpense(req, userId);
 		// then
 		Expense expense = expenseRepository.findAll()
 			.stream()
-			.filter(e -> e.getUser().getId().equals(user.getId()))
+			.filter(e -> e.getUserId().equals(userId))
 			.findFirst()
 			.orElseThrow();
 		assertThat(expense.getAmount()).isEqualTo(1);
@@ -61,16 +57,16 @@ class ExpenseServiceIntegrationTest {
 	@Test
 	void 과거_날짜_등록_성공() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		Category category = categoryRepository.findAll().get(0);
 		RegisterExpenseRequest req = new RegisterExpenseRequest(category.getId(), 1000, "테스트",
 			LocalDate.now().minusDays(1));
 		// when
-		expenseService.registerExpense(req, user.getId());
+		expenseService.registerExpense(req, userId);
 		// then
 		Expense expense = expenseRepository.findAll()
 			.stream()
-			.filter(e -> e.getUser().getId().equals(user.getId()))
+			.filter(e -> e.getUserId().equals(userId))
 			.findFirst()
 			.orElseThrow();
 		assertThat(expense.getExpenseAt()).isEqualTo(LocalDate.now().minusDays(1));
@@ -79,15 +75,15 @@ class ExpenseServiceIntegrationTest {
 	@Test
 	void 오늘_날짜_등록_성공() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		Category category = categoryRepository.findAll().get(0);
 		RegisterExpenseRequest req = new RegisterExpenseRequest(category.getId(), 1000, "테스트", LocalDate.now());
 		// when
-		expenseService.registerExpense(req, user.getId());
+		expenseService.registerExpense(req, userId);
 		// then
 		Expense expense = expenseRepository.findAll()
 			.stream()
-			.filter(e -> e.getUser().getId().equals(user.getId()))
+			.filter(e -> e.getUserId().equals(userId))
 			.findFirst()
 			.orElseThrow();
 		assertThat(expense.getExpenseAt()).isEqualTo(LocalDate.now());
@@ -96,12 +92,24 @@ class ExpenseServiceIntegrationTest {
 	@Test
 	void 미래_날짜_등록_실패() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		Category category = categoryRepository.findAll().get(0);
 		RegisterExpenseRequest req = new RegisterExpenseRequest(category.getId(), 1000, "테스트",
 			LocalDate.now().plusDays(1));
 		// when & then
-		assertThatThrownBy(() -> expenseService.registerExpense(req, user.getId()))
+		assertThatThrownBy(() -> expenseService.registerExpense(req, userId))
+			.isInstanceOf(NotRegisterExpenseException.class);
+	}
+
+	@Test
+	void 금액이_음수일_때_등록_실패() {
+		// given
+		Long userId = 1L;
+		Category category = categoryRepository.findAll().get(0);
+		RegisterExpenseRequest req = new RegisterExpenseRequest(category.getId(), -1000, "테스트",
+			LocalDate.now().minusDays(1));
+		// when & then
+		assertThatThrownBy(() -> expenseService.registerExpense(req, userId))
 			.isInstanceOf(NotRegisterExpenseException.class);
 	}
 } 

@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.domain.user.exception;
+package com.prography.budgetbuddiesbackend.user.exception;
 
 import com.prography.budgetbuddiesbackend.common.response.ResultCode;
 import com.prography.budgetbuddiesbackend.common.response.error.BusinessException;

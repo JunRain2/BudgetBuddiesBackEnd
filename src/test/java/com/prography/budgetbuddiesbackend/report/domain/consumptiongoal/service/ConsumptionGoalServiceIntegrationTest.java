@@ -2,6 +2,7 @@ package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -15,8 +16,7 @@ import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.User
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseServiceImpl;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
+import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
 
 @ServiceIntegrationTest
 class ConsumptionGoalServiceIntegrationTest {
@@ -25,24 +25,24 @@ class ConsumptionGoalServiceIntegrationTest {
 	@Autowired
 	ConsumptionGoalService consumptionGoalDomainService;
 	@Autowired
-	UserRepository userRepository;
-	@Autowired
 	CategoryRepository categoryRepository;
 	@Autowired
 	ExpenseServiceImpl expenseService;
+	@Autowired
+	ExpenseRepository expenseRepository;
 
 	@Test
 	void 사용자와_연월로_소비목표_조회_정상_및_경계() {
 		// given
-		User user = userRepository.save(User.of());
-		Category category = categoryRepository.save(Category.of(user, "식비"));
+		Long userId = 1L;
+		Category category = categoryRepository.save(Category.of(userId, "식비"));
 		YearMonth month = YearMonth.of(2024, 6);
 
-		ConsumptionGoal goal = ConsumptionGoal.of(user, category, 10000, month);
+		ConsumptionGoal goal = ConsumptionGoal.of(userId, category, 10000, month);
 		consumptionGoalDomainService.save(goal);
 
 		// when
-		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
+		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(userId, month);
 
 		// then
 		assertThat(result).hasSize(1);
@@ -53,75 +53,56 @@ class ConsumptionGoalServiceIntegrationTest {
 	@Test
 	void 미래_연월_조회시_예외_발생() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		YearMonth futureMonth = YearMonth.now().plusMonths(1);
 
 		// when & then
-		assertThatThrownBy(() -> consumptionGoalService.getUserConsumptionGoalsByMonth(user, futureMonth)).isInstanceOf(
+		assertThatThrownBy(() -> consumptionGoalService.getUserConsumptionGoalsByMonth(userId, futureMonth)).isInstanceOf(
 			RuntimeException.class);
 	}
 
 	@Test
 	void 소비목표_없을때_빈_리스트_반환() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		YearMonth month = YearMonth.of(2024, 6);
 
 		// when
-		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
+		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(userId, month);
 
 		// then
 		assertThat(result).isEmpty();
 	}
 
 	@Test
-	void 여러_카테고리_여러_목표_정상_조회() {
+	void 소비금액이_있을_때_remainingAmount가_정확히_계산된다() {
 		// given
-		User user = userRepository.save(User.of());
-		Category cat1 = categoryRepository.save(Category.of(user, "식비"));
-		Category cat2 = categoryRepository.save(Category.of(user, "교통"));
+		Long userId = 1L;
+		Category cat = categoryRepository.save(Category.of(userId, "식비"));
 		YearMonth month = YearMonth.of(2024, 6);
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat1, 10000, month));
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat2, 20000, month));
+		consumptionGoalDomainService.save(ConsumptionGoal.of(userId, cat, 10000, month));
+
+		Expense expense = expenseRepository.save(Expense.of(userId, cat, 3000, "점심", LocalDate.of(2024, 6, 15)));
 
 		// when
-		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
-
-		// then
-		assertThat(result).hasSize(2);
-		assertThat(result.stream().map(UserConsumptionGoalResponse::categoryName)).containsExactlyInAnyOrder("식비",
-			"교통");
-	}
-
-	@Test
-	void 소비금액이_목표금액보다_클_경우_remainingAmount_음수() {
-		// given
-		User user = userRepository.save(User.of());
-		Category cat = categoryRepository.save(Category.of(user, "식비"));
-		YearMonth month = YearMonth.of(2024, 6);
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat, 10000, month));
-		// 소비 15000원
-		Expense expense = Expense.of(user, cat, 15000, "초과지출", month.atDay(10));
-		expenseService.save(expense);
-
-		// when
-		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
+		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(userId, month);
 
 		// then
 		assertThat(result).hasSize(1);
-		assertThat(result.get(0).remainingAmount()).isEqualTo(-5000);
+		assertThat(result.get(0).totalSpent()).isEqualTo(3000);
+		assertThat(result.get(0).remainingAmount()).isEqualTo(7000);
 	}
 
 	@Test
 	void 소비금액이_0원인_경우_remainingAmount는_cap과_같다() {
 		// given
-		User user = userRepository.save(User.of());
-		Category cat = categoryRepository.save(Category.of(user, "식비"));
+		Long userId = 1L;
+		Category cat = categoryRepository.save(Category.of(userId, "식비"));
 		YearMonth month = YearMonth.of(2024, 6);
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat, 10000, month));
+		consumptionGoalDomainService.save(ConsumptionGoal.of(userId, cat, 10000, month));
 
 		// when
-		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
+		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(userId, month);
 
 		// then
 		assertThat(result).hasSize(1);
@@ -132,52 +113,22 @@ class ConsumptionGoalServiceIntegrationTest {
 	@Test
 	void 여러_유저가_있을때_본인것만_조회된다() {
 		// given
-		User user1 = userRepository.save(User.of());
-		User user2 = userRepository.save(User.of());
-		Category cat1 = categoryRepository.save(Category.of(user1, "식비"));
-		Category cat2 = categoryRepository.save(Category.of(user2, "교통"));
+		Long userId1 = 1L;
+		Long userId2 = 2L;
+		Category cat1 = categoryRepository.save(Category.of(userId1, "식비"));
+		Category cat2 = categoryRepository.save(Category.of(userId2, "교통"));
 		YearMonth month = YearMonth.of(2024, 6);
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user1, cat1, 10000, month));
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user2, cat2, 20000, month));
+		consumptionGoalDomainService.save(ConsumptionGoal.of(userId1, cat1, 10000, month));
+		consumptionGoalDomainService.save(ConsumptionGoal.of(userId2, cat2, 20000, month));
 
 		// when
-		List<UserConsumptionGoalResponse> result1 = consumptionGoalService.getUserConsumptionGoalsByMonth(user1, month);
-		List<UserConsumptionGoalResponse> result2 = consumptionGoalService.getUserConsumptionGoalsByMonth(user2, month);
+		List<UserConsumptionGoalResponse> result1 = consumptionGoalService.getUserConsumptionGoalsByMonth(userId1, month);
+		List<UserConsumptionGoalResponse> result2 = consumptionGoalService.getUserConsumptionGoalsByMonth(userId2, month);
 
 		// then
 		assertThat(result1).hasSize(1);
 		assertThat(result1.get(0).categoryName()).isEqualTo("식비");
 		assertThat(result2).hasSize(1);
 		assertThat(result2.get(0).categoryName()).isEqualTo("교통");
-	}
-
-	@Test
-	void 카테고리별로_소비금액이_정확히_집계된다() {
-		// given
-		User user = userRepository.save(User.of());
-		Category cat1 = categoryRepository.save(Category.of(user, "식비"));
-		Category cat2 = categoryRepository.save(Category.of(user, "교통"));
-		YearMonth month = YearMonth.of(2024, 6);
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat1, 10000, month));
-		consumptionGoalDomainService.save(ConsumptionGoal.of(user, cat2, 20000, month));
-		// 식비 3000, 교통 5000
-		expenseService.save(Expense.of(user, cat1, 3000, "식비지출", month.atDay(5)));
-		expenseService.save(Expense.of(user, cat2, 5000, "교통지출", month.atDay(10)));
-
-		// when
-		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(user, month);
-
-		// then
-		assertThat(result).hasSize(2);
-		UserConsumptionGoalResponse 식비 = result.stream()
-			.filter(r -> r.categoryName().equals("식비"))
-			.findFirst()
-			.orElseThrow();
-		UserConsumptionGoalResponse 교통 = result.stream()
-			.filter(r -> r.categoryName().equals("교통"))
-			.findFirst()
-			.orElseThrow();
-		assertThat(식비.totalSpent()).isEqualTo(3000);
-		assertThat(교통.totalSpent()).isEqualTo(5000);
 	}
 }

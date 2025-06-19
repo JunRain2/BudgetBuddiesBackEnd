@@ -15,7 +15,6 @@ CREATE TABLE category
     created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP            DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP            DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (id),
     CONSTRAINT ux_category_user_name UNIQUE (user_id, name)
 );
 
@@ -29,7 +28,6 @@ CREATE TABLE consumption_goal
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP          DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP          DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (id),
     FOREIGN KEY (category_id) REFERENCES category (id),
     CONSTRAINT ux_goal_user_category_month UNIQUE (user_id, category_id, goal_month)
 );
@@ -45,7 +43,6 @@ CREATE TABLE expense
     created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP             DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (id),
     FOREIGN KEY (category_id) REFERENCES category (id)
 );
 

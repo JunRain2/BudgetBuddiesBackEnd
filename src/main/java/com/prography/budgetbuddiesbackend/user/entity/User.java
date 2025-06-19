@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.domain.user.entity;
+package com.prography.budgetbuddiesbackend.user.entity;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 
@@ -25,4 +25,4 @@ public class User extends BaseEntity {
 	public static User of() {
 		return new User();
 	}
-}
+} 

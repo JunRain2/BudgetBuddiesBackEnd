@@ -10,8 +10,6 @@ import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.
 import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.response.UserCategoryResponse;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,11 +22,9 @@ public class CategoryFacadeService implements CategoryUseCase {
 
 	private final CategoryExpenseService expenseService;
 	private final CategoryConsumptionGoalService consumptionGoalService;
-	private final UserService userService;
 
 	public void registerCategory(RegisterCategoryRequest request, Long userId) {
-		User user = userService.findById(userId);
-		Category newCategory = mapper.registerCategoryRequestToEntity(request, user);
+		Category newCategory = mapper.registerCategoryRequestToEntity(request, userId);
 		newCategory = categoryService.save(newCategory);
 
 		YearMonth now = YearMonth.now();

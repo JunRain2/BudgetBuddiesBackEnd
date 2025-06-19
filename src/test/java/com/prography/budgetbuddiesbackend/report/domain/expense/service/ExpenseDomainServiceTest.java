@@ -16,7 +16,6 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotFoundExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class ExpenseDomainServiceTest {
@@ -26,15 +25,15 @@ class ExpenseDomainServiceTest {
 	@Mock
 	private ExpenseRepository expenseRepository;
 
-	private User user;
+	private Long userId;
 	private Category category;
 	private Expense expense;
 
 	@BeforeEach
 	void setUp() {
-		user = User.of();
-		category = Category.of(user, "식비");
-		expense = Expense.of(user, category, 10000, "점심", LocalDate.now());
+		userId = 1L;
+		category = Category.of(userId, "식비");
+		expense = Expense.of(userId, category, 10000, "점심", LocalDate.now());
 	}
 
 	@Test

@@ -18,7 +18,6 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.exception.NotFoundConsumptionGoalException;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class ConsumptionGoalDomainServiceTest {
@@ -28,15 +27,15 @@ class ConsumptionGoalDomainServiceTest {
 	@Mock
 	private ConsumptionGoalRepository consumptionGoalRepository;
 
-	private User user;
+	private Long userId;
 	private Category category;
 	private ConsumptionGoal consumptionGoal;
 
 	@BeforeEach
 	void setUp() {
-		user = User.of();
-		category = Category.of(user, "식비");
-		consumptionGoal = ConsumptionGoal.of(user, category, 100000, YearMonth.now());
+		userId = 1L;
+		category = Category.of(userId, "식비");
+		consumptionGoal = ConsumptionGoal.of(userId, category, 100000, YearMonth.now());
 	}
 
 	@Test
@@ -59,14 +58,14 @@ class ConsumptionGoalDomainServiceTest {
 		// given
 		YearMonth yearMonth = YearMonth.now();
 		List<ConsumptionGoal> goals = List.of(consumptionGoal);
-		when(consumptionGoalRepository.findByUserAndGoalMonthWithCategory(user, yearMonth)).thenReturn(goals);
+		when(consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, yearMonth)).thenReturn(goals);
 
 		// when
-		List<ConsumptionGoal> foundGoals = consumptionGoalService.getByUserAndYearMonth(user, yearMonth);
+		List<ConsumptionGoal> foundGoals = consumptionGoalService.getByUserAndYearMonth(userId, yearMonth);
 
 		// then
 		assertThat(foundGoals).isEqualTo(goals);
-		verify(consumptionGoalRepository).findByUserAndGoalMonthWithCategory(user, yearMonth);
+		verify(consumptionGoalRepository).findByUserIdAndGoalMonthWithCategory(userId, yearMonth);
 	}
 
 	@Test
@@ -76,9 +75,9 @@ class ConsumptionGoalDomainServiceTest {
 		YearMonth futureMonth = YearMonth.now().plusMonths(1);
 
 		// when & then
-		assertThatThrownBy(() -> consumptionGoalService.getByUserAndYearMonth(user, futureMonth)).isInstanceOf(
+		assertThatThrownBy(() -> consumptionGoalService.getByUserAndYearMonth(userId, futureMonth)).isInstanceOf(
 			NotFoundConsumptionGoalException.class);
-		verify(consumptionGoalRepository, never()).findByUserAndGoalMonthWithCategory(any(), any());
+		verify(consumptionGoalRepository, never()).findByUserIdAndGoalMonthWithCategory(any(), any());
 	}
 
 	@Test
@@ -86,13 +85,13 @@ class ConsumptionGoalDomainServiceTest {
 	void getByUserAndYearMonth_결과없음() {
 		// given
 		YearMonth yearMonth = YearMonth.now();
-		when(consumptionGoalRepository.findByUserAndGoalMonthWithCategory(user, yearMonth)).thenReturn(List.of());
+		when(consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, yearMonth)).thenReturn(List.of());
 
 		// when
-		List<ConsumptionGoal> foundGoals = consumptionGoalService.getByUserAndYearMonth(user, yearMonth);
+		List<ConsumptionGoal> foundGoals = consumptionGoalService.getByUserAndYearMonth(userId, yearMonth);
 
 		// then
 		assertThat(foundGoals).isEmpty();
-		verify(consumptionGoalRepository).findByUserAndGoalMonthWithCategory(user, yearMonth);
+		verify(consumptionGoalRepository).findByUserIdAndGoalMonthWithCategory(userId, yearMonth);
 	}
 } 

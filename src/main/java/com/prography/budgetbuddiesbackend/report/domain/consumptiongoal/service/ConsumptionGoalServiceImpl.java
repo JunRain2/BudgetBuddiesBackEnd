@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.exception.NotFoundConsumptionGoalException;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,11 +24,11 @@ public class ConsumptionGoalServiceImpl implements ConsumptionGoalService {
 	}
 
 	@Override
-	public List<ConsumptionGoal> getByUserAndYearMonth(User user, YearMonth yearMonth) {
+	public List<ConsumptionGoal> getByUserAndYearMonth(Long userId, YearMonth yearMonth) {
 		if (yearMonth.isAfter(YearMonth.now())) {
 			throw new NotFoundConsumptionGoalException();
 		}
 
-		return consumptionGoalRepository.findByUserAndGoalMonthWithCategory(user, yearMonth);
+		return consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, yearMonth);
 	}
 } 

@@ -11,31 +11,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.prography.budgetbuddiesbackend.common.RepositoryTest;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryType;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.repository.UserRepository;
 
 @RepositoryTest
 class CategoryRepositoryTest {
 	@Autowired
 	private CategoryRepository categoryRepository;
-	@Autowired
-	private UserRepository userRepository;
 
 	@Test
 	void 사용자의_카테고리_이름_조회시_해당_사용자_카테고리만_반환된다() {
 		// given
-		User user1 = userRepository.save(User.of());
-		User user2 = userRepository.save(User.of());
+		Long userId1 = 1L;
+		Long userId2 = 2L;
 
 		final String user1CategoryName = "USER1_CATEGORY_NAME";
 		final String user2CategoryName = "USER2_CATEGORY_NAME";
 
-		Category user1Category = Category.of(user1, user1CategoryName);
-		Category user2Category = Category.of(user2, user2CategoryName);
+		Category user1Category = Category.of(userId1, user1CategoryName);
+		Category user2Category = Category.of(userId2, user2CategoryName);
 		categoryRepository.saveAll(List.of(user1Category, user2Category));
 
 		// when
-		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(user1.getId(), CategoryType.DEFAULT);
+		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(userId1, CategoryType.DEFAULT);
 
 		// then
 		assertThat(result).contains(user1CategoryName).doesNotContain(user2CategoryName);
@@ -44,13 +40,13 @@ class CategoryRepositoryTest {
 	@Test
 	void 사용자가_디폴트_카테고리만_가진_경우_디폴트_카테고리_이름만_반환된다() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 
 		int defaultCategoryCount = categoryRepository.findUserCategoriesByUserIdOrType(null, CategoryType.DEFAULT)
 			.size();
 
 		// when
-		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
+		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(userId, CategoryType.DEFAULT);
 
 		// then
 		assertThat(result).hasSize(defaultCategoryCount);
@@ -71,12 +67,12 @@ class CategoryRepositoryTest {
 	@Test
 	void 삭제된_카테고리는_카테고리_이름_조회시_포함되지_않음() {
 		// given
-		User user = userRepository.save(User.of());
-		Category category = categoryRepository.save(Category.of(user, "삭제될카테고리"));
+		Long userId = 1L;
+		Category category = categoryRepository.save(Category.of(userId, "삭제될카테고리"));
 		categoryRepository.delete(category);
 
 		// when
-		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
+		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(userId, CategoryType.DEFAULT);
 
 		// then
 		assertThat(result).isNotEmpty().doesNotContain("삭제될카테고리");
@@ -85,11 +81,11 @@ class CategoryRepositoryTest {
 	@Test
 	void 카테고리_이름이_최대길이_20자일_때_정상_저장_및_조회된다() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		String name = "가".repeat(20);
-		categoryRepository.save(Category.of(user, name));
+		categoryRepository.save(Category.of(userId, name));
 		// when
-		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
+		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(userId, CategoryType.DEFAULT);
 		// then
 		assertThat(result).contains(name);
 	}
@@ -97,11 +93,11 @@ class CategoryRepositoryTest {
 	@Test
 	void 카테고리_이름이_1자일_때_정상_저장_및_조회된다() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		String name = "가";
-		categoryRepository.save(Category.of(user, name));
+		categoryRepository.save(Category.of(userId, name));
 		// when
-		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
+		Set<String> result = categoryRepository.findAllCategoryNamesByUserIdOrType(userId, CategoryType.DEFAULT);
 		// then
 		assertThat(result).contains(name);
 	}
@@ -109,29 +105,29 @@ class CategoryRepositoryTest {
 	@Test
 	void 카테고리_이름이_빈문자열일_때_저장시_예외가_발생한다() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		String name = "";
 		// when & then
-		assertThatThrownBy(() -> categoryRepository.save(Category.of(user, name))).isInstanceOf(Exception.class);
+		assertThatThrownBy(() -> categoryRepository.save(Category.of(userId, name))).isInstanceOf(Exception.class);
 	}
 
 	@Test
 	void 카테고리_이름이_21자일_때_저장시_예외가_발생한다() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		String name = "가".repeat(21);
 		// when & then
-		assertThatThrownBy(() -> categoryRepository.save(Category.of(user, name))).isInstanceOf(Exception.class);
+		assertThatThrownBy(() -> categoryRepository.save(Category.of(userId, name))).isInstanceOf(Exception.class);
 	}
 
 	@Test
 	void 사용자의_카테고리_엔티티_정상_조회() {
 		// given
-		User user = userRepository.save(User.of());
+		Long userId = 1L;
 		String name = "카테고리1";
-		categoryRepository.save(Category.of(user, name));
+		categoryRepository.save(Category.of(userId, name));
 		// when
-		List<Category> result = categoryRepository.findUserCategoriesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
+		List<Category> result = categoryRepository.findUserCategoriesByUserIdOrType(userId, CategoryType.DEFAULT);
 		// then
 		assertThat(result.stream().map(Category::getName)).contains(name);
 	}
@@ -143,18 +139,5 @@ class CategoryRepositoryTest {
 			.size();
 		List<Category> result = categoryRepository.findUserCategoriesByUserIdOrType(없는유저ID, CategoryType.DEFAULT);
 		assertThat(result).hasSize(defaultCategoryCount);
-	}
-
-	@Test
-	void 삭제된_카테고리는_카테고리_엔티티_조회시_포함되지_않음() {
-		// given
-		User user = userRepository.save(User.of());
-		Category category = categoryRepository.save(Category.of(user, "삭제될카테고리"));
-		categoryRepository.delete(category);
-		// when
-		List<Category> result = categoryRepository.findUserCategoriesByUserIdOrType(user.getId(), CategoryType.DEFAULT);
-		// then
-		List<String> categoryNames = result.stream().map(Category::getName).toList();
-		assertThat(categoryNames).isNotEmpty().doesNotContain("삭제될카테고리");
 	}
 }

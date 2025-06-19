@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.UserConsumptionGoalResponse;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +21,9 @@ public class ConsumptionGoalFacadeService implements ConsumptionGoalUseCase {
 
 	private final ConsumptionGoalExpenseService expenseService;
 
-	public List<UserConsumptionGoalResponse> getUserConsumptionGoalsByMonth(User user, YearMonth yearMonth) {
-		List<ConsumptionGoal> goals = consumptionGoalService.getByUserAndYearMonth(user, yearMonth);
-		Map<Long, Integer> totalSpentByCategory = expenseService.getTotalSpentByUserCategory(user, yearMonth);
+	public List<UserConsumptionGoalResponse> getUserConsumptionGoalsByMonth(Long userId, YearMonth yearMonth) {
+		List<ConsumptionGoal> goals = consumptionGoalService.getByUserAndYearMonth(userId, yearMonth);
+		Map<Long, Integer> totalSpentByCategory = expenseService.getTotalSpentByUserCategory(userId, yearMonth);
 
 		return goals.stream()
 			.map(goal -> mergeWithSpending(goal, totalSpentByCategory))

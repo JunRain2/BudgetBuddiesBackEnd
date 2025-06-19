@@ -8,8 +8,6 @@ import com.prography.budgetbuddiesbackend.report.domain.category.service.Categor
 import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.RegisterExpenseRequest;
 import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.UpdateExpenseRequest;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
-import com.prography.budgetbuddiesbackend.report.domain.user.entity.User;
-import com.prography.budgetbuddiesbackend.report.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,12 +19,10 @@ public class ExpenseFacadeService implements ExpenseUseCase {
 	private final ExpenseMapper mapper;
 
 	private final CategoryService categoryService;
-	private final UserService userService;
 
 	public void registerExpense(RegisterExpenseRequest request, Long userId) {
-		User user = userService.findById(userId);
 		Category category = categoryService.findById(request.categoryId());
-		Expense expense = mapper.requestToEntity(request, category, user);
+		Expense expense = mapper.requestToEntity(request, category, userId);
 
 		expenseService.save(expense);
 	}

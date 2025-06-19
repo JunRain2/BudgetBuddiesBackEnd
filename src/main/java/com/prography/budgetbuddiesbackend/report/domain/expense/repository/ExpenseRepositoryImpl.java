@@ -26,7 +26,7 @@ public class ExpenseRepositoryImpl implements ExpenseQueryRepository {
 		return queryFactory.select(
 				Projections.constructor(SumAmountGroupByCategoryResult.class, expense.category.id, expense.amount.sum()))
 			.from(expense)
-			.where(expense.user.id.eq(userId).and(expense.expenseAt.between(startDate, endDate)))
+			.where(expense.userId.eq(userId).and(expense.expenseAt.between(startDate, endDate)))
 			.groupBy(expense.category.id)
 			.fetch();
 	}
