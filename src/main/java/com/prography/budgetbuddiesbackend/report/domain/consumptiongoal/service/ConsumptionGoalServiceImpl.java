@@ -1,6 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service;
 
 import java.time.YearMonth;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -31,4 +32,9 @@ public class ConsumptionGoalServiceImpl implements ConsumptionGoalService {
 
 		return consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, yearMonth);
 	}
-} 
+
+	@Override
+	public List<ConsumptionGoal> findAllByIdList(Collection<Long> idList) {
+		return consumptionGoalRepository.findAllById(idList);
+	}
+}

@@ -40,7 +40,7 @@ class ConsumptionGoalTest {
 		Integer newCap = 150000;
 
 		// when
-		goal.setCap(newCap);
+		goal.update(newCap);
 
 		// then
 		assertThat(goal.getCap()).isEqualTo(newCap);

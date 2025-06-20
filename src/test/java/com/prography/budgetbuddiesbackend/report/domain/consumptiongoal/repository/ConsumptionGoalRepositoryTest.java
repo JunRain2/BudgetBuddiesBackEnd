@@ -56,4 +56,23 @@ class ConsumptionGoalRepositoryTest {
 		// then
 		assertThat(result).isEmpty();
 	}
+
+	@Test
+	void 여러_id로_소비목표_일괄_조회() {
+		// given
+		Long userId = 1L;
+		Category category1 = categoryRepository.save(Category.of(userId, "식비"));
+		Category category2 = categoryRepository.save(Category.of(userId, "교통"));
+		YearMonth month = YearMonth.of(2024, 6);
+
+		ConsumptionGoal goal1 = consumptionGoalRepository.save(ConsumptionGoal.of(userId, category1, 10000, month));
+		ConsumptionGoal goal2 = consumptionGoalRepository.save(ConsumptionGoal.of(userId, category2, 20000, month));
+
+		// when
+		List<ConsumptionGoal> result = consumptionGoalRepository.findAllById(List.of(goal1.getId(), goal2.getId()));
+
+		// then
+		assertThat(result).hasSize(2);
+		assertThat(result).extracting("cap").containsExactlyInAnyOrder(10000, 20000);
+	}
 }

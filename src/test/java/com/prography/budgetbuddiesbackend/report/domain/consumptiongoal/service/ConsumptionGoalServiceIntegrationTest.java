@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.C
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseServiceImpl;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.BatchUpdateConsumptionGoalCapRequest;
 
 @ServiceIntegrationTest
 class ConsumptionGoalServiceIntegrationTest {
@@ -130,5 +132,31 @@ class ConsumptionGoalServiceIntegrationTest {
 		assertThat(result1.get(0).categoryName()).isEqualTo("식비");
 		assertThat(result2).hasSize(1);
 		assertThat(result2.get(0).categoryName()).isEqualTo("교통");
+	}
+
+	@Test
+	void 여러_소비목표의_cap을_일괄_수정한다() {
+		// given
+		Long userId = 1L;
+		Category cat1 = categoryRepository.save(Category.of(userId, "식비"));
+		Category cat2 = categoryRepository.save(Category.of(userId, "교통"));
+		YearMonth month = YearMonth.of(2024, 6);
+
+		ConsumptionGoal goal1 = consumptionGoalDomainService.save(ConsumptionGoal.of(userId, cat1, 10000, month));
+		ConsumptionGoal goal2 = consumptionGoalDomainService.save(ConsumptionGoal.of(userId, cat2, 20000, month));
+
+		BatchUpdateConsumptionGoalCapRequest request = new BatchUpdateConsumptionGoalCapRequest(
+			Arrays.asList(
+				new BatchUpdateConsumptionGoalCapRequest.GoalCapUpdate(goal1.getId(), 15000),
+				new BatchUpdateConsumptionGoalCapRequest.GoalCapUpdate(goal2.getId(), 25000)
+			)
+		);
+
+		// when
+		consumptionGoalService.batchUpdateCap(userId, request);
+
+		// then
+		List<ConsumptionGoal> updatedGoals = consumptionGoalDomainService.findAllByIdList(List.of(goal1.getId(), goal2.getId()));
+		assertThat(updatedGoals).extracting("cap").containsExactlyInAnyOrder(15000, 25000);
 	}
 }

@@ -4,6 +4,7 @@ import java.time.YearMonth;
 
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.exception.NotUpdateConsumptionGoalException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,7 +58,16 @@ public class ConsumptionGoal extends BaseEntity {
 		return new ConsumptionGoal(userId, category, cap, yearMonth);
 	}
 
-	public void setCap(Integer cap) {
+	public void canUpdate(Long userId) {
+		if (!this.userId.equals(userId)) {
+			throw new NotUpdateConsumptionGoalException();
+		}
+	}
+
+	public void update(Integer cap) {
+		if (cap <= 0) {
+			throw new NotUpdateConsumptionGoalException();
+		}
 		this.cap = cap;
 	}
 }
