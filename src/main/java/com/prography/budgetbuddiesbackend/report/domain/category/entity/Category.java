@@ -62,7 +62,7 @@ public class Category extends BaseEntity {
 	}
 
 	public void validateModifiable(Long userId) {
-		if (DEFAULT.equals(this.getType()) || !this.getUserId().equals(userId)) {
+		if (DEFAULT.equals(this.type) || !userId.equals(this.userId)) {
 			throw new UnmodifiableCategoryException();
 		}
 	}

@@ -1,4 +1,4 @@
-package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto;
+package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

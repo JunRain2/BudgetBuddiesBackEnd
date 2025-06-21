@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.BatchUpdateConsumptionGoalCapRequest.GoalCapUpdate;
 
 public interface ConsumptionGoalService {
 	/**

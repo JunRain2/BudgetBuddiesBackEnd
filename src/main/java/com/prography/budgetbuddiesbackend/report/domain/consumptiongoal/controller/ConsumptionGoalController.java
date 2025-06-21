@@ -4,6 +4,8 @@ import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,31 +14,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.prography.budgetbuddiesbackend.common.annotation.CurrentUserId;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.UserConsumptionGoalResponse;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.BatchUpdateConsumptionGoalCapRequest;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.ConsumptionGoalFacadeService;
 import com.prography.budgetbuddiesbackend.common.response.ApiResponse;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto.BatchUpdateConsumptionGoalCapRequest;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto.UserConsumptionGoalResponse;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.ConsumptionGoalUseCase;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/consumption-goals")
+@Validated
 @RequiredArgsConstructor
 public class ConsumptionGoalController {
-	private final ConsumptionGoalFacadeService consumptionGoalService;
+	private final ConsumptionGoalUseCase consumptionGoalService;
 
 	@GetMapping
-	public List<UserConsumptionGoalResponse> getUserConsumptionGoalsByMonth(
-		@RequestParam @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth,
-		@CurrentUserId @RequestParam Long userId
-	) {
-		return consumptionGoalService.getUserConsumptionGoalsByMonth(userId, yearMonth);
+	public ResponseEntity<ApiResponse<List<UserConsumptionGoalResponse>>> getUserConsumptionGoalsByMonth(
+		@NotNull @RequestParam @PastOrPresent @DateTimeFormat(pattern = "yyyy-MM") YearMonth yearMonth,
+		@CurrentUserId @RequestParam Long userId) {
+		List<UserConsumptionGoalResponse> result = consumptionGoalService.getUserConsumptionGoalsByMonth(userId,
+			yearMonth);
+		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
 	@PatchMapping("/batch-cap")
-	public ApiResponse<Void> batchUpdateConsumptionGoalCap(@RequestBody BatchUpdateConsumptionGoalCapRequest request,
-														 @CurrentUserId @RequestParam Long userId) {
+	public ResponseEntity<ApiResponse<Void>> batchUpdateConsumptionGoalCap(
+		@RequestBody @Valid BatchUpdateConsumptionGoalCapRequest request, @CurrentUserId @RequestParam Long userId) {
 		consumptionGoalService.batchUpdateCap(userId, request);
-		return ApiResponse.success();
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 } 

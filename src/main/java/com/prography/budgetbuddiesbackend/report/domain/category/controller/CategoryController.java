@@ -18,6 +18,7 @@ import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.
 import com.prography.budgetbuddiesbackend.report.domain.category.controller.dto.response.UserCategoryResponse;
 import com.prography.budgetbuddiesbackend.report.domain.category.service.CategoryFacadeService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,7 +30,7 @@ public class CategoryController {
 
 	// 카테고리 생성
 	@PostMapping
-	public ResponseEntity<ApiResponse<Void>> createCategory(@RequestBody RegisterCategoryRequest request,
+	public ResponseEntity<ApiResponse<Void>> registerCategory(@RequestBody @Valid RegisterCategoryRequest request,
 		@CurrentUserId @RequestParam Long userId) {
 		categoryFacadeService.registerCategory(request, userId);
 		return ResponseEntity.ok(ApiResponse.success());
@@ -47,7 +48,7 @@ public class CategoryController {
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<UserCategoryResponse>>> getUserCategories(
 		@CurrentUserId @RequestParam Long userId) {
-		List<UserCategoryResponse> categories = categoryFacadeService.getUserCategories(userId);
-		return ResponseEntity.ok(ApiResponse.success(categories));
+		List<UserCategoryResponse> result = categoryFacadeService.getUserCategories(userId);
+		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 } 

@@ -13,12 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.prography.budgetbuddiesbackend.common.ServiceIntegrationTest;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.UserConsumptionGoalResponse;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto.UserConsumptionGoalResponse;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.service.ExpenseServiceImpl;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.dto.BatchUpdateConsumptionGoalCapRequest;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto.BatchUpdateConsumptionGoalCapRequest;
 
 @ServiceIntegrationTest
 class ConsumptionGoalServiceIntegrationTest {
