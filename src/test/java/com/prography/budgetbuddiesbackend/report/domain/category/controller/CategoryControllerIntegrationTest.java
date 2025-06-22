@@ -110,7 +110,13 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 			.then()
 			.statusCode(HttpStatus.CONFLICT.value())
 			.body("code", is("DUPLICATE"))
-			.body("message", is("중복된 요청입니다."));
+			.body("message", is("중복된 요청입니다."))
+			.body("status", is(409))
+			.body("path", is("/api/categories"))
+			.body("timestamp", notNullValue())
+			.body("errors", notNullValue())
+			.body("errors[0].field", is("categoryName"))
+			.body("errors[0].reason", is("중복된 카테고리 명이 존재합니다."));
 	}
 
 	@Test
@@ -127,7 +133,14 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 			.post("/api/categories")
 			.then()
 			.statusCode(HttpStatus.BAD_REQUEST.value())
-			.body("code", is("INVALID_INPUT"));
+			.body("code", is("INVALID_INPUT"))
+			.body("message", is("입력값이 올바르지 않습니다."))
+			.body("status", is(400))
+			.body("path", is("/api/categories"))
+			.body("timestamp", notNullValue())
+			.body("errors", notNullValue())
+			.body("errors[0].field", is("name"))
+			.body("errors[1].field", is("name"));
 	}
 
 	@Test
@@ -144,7 +157,14 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 			.post("/api/categories")
 			.then()
 			.statusCode(HttpStatus.BAD_REQUEST.value())
-			.body("code", is("INVALID_INPUT"));
+			.body("code", is("INVALID_INPUT"))
+			.body("message", is("입력값이 올바르지 않습니다."))
+			.body("status", is(400))
+			.body("path", is("/api/categories"))
+			.body("timestamp", notNullValue())
+			.body("errors", notNullValue())
+			.body("errors[0].field", is("name"))
+			.body("errors[0].reason", is("이름의 크기는 1자 이상 20자 이하여야 합니다."));
 	}
 
 	@Test
@@ -240,7 +260,14 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 			.delete("/api/categories/99999")
 			.then()
 			.statusCode(HttpStatus.NOT_FOUND.value())
-			.body("code", is("NOT_FOUND"));
+			.body("code", is("NOT_FOUND"))
+			.body("message", is("요청한 리소스를 찾을 수 없습니다."))
+			.body("status", is(404))
+			.body("path", is("/api/categories/99999"))
+			.body("timestamp", notNullValue())
+			.body("errors", notNullValue())
+			.body("errors[0].field", is("categoryId"))
+			.body("errors[0].reason", is("존재하지 않는 카테고리입니다."));
 	}
 
 	@Test
@@ -257,7 +284,14 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 			.delete("/api/categories/" + defaultCategoryId)
 			.then()
 			.statusCode(HttpStatus.FORBIDDEN.value())
-			.body("code", is("FORBIDDEN"));
+			.body("code", is("FORBIDDEN"))
+			.body("message", is("접근 권한이 없습니다."))
+			.body("status", is(403))
+			.body("path", is("/api/categories/" + defaultCategoryId))
+			.body("timestamp", notNullValue())
+			.body("errors", notNullValue())
+			.body("errors[0].field", is("category"))
+			.body("errors[0].reason", is("사용자가 수정이 불가능한 카테고리입니다."));
 	}
 
 	@Test
@@ -300,7 +334,7 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 	@DisplayName("카테고리 등록 API - 특수문자 포함 이름으로 등록 시 정상 응답")
 	void registerCategory_specialCharacters_success() {
 		// given
-		RegisterCategoryRequest request = new RegisterCategoryRequest("식비&음료");
+		RegisterCategoryRequest request = new RegisterCategoryRequest("식비-카테고리");
 		// when & then
 		given()
 			.contentType(ContentType.JSON)
@@ -353,16 +387,20 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 	@Test
 	@DisplayName("사용자 카테고리 조회 API - 다른 사용자의 카테고리는 조회되지 않음")
 	void getUserCategories_otherUserIsolation() {
-		// given
-		// 다른 사용자 생성
+		// given - 다른 사용자 생성
 		User otherUser = User.of();
 		User savedOtherUser = userRepository.save(otherUser);
 
 		// 다른 사용자의 카테고리 생성
-		Category otherCategory = Category.of(savedOtherUser.getId(), "다른사용자카테고리");
-		categoryRepository.save(otherCategory);
+		RegisterCategoryRequest request = new RegisterCategoryRequest("다른사용자카테고리");
+		given()
+			.contentType(ContentType.JSON)
+			.queryParam("userId", savedOtherUser.getId())
+			.body(request)
+			.when()
+			.post("/api/categories");
 
-		// when & then - 원래 사용자로 조회 시 다른 사용자의 카테고리는 보이지 않아야 함
+		// when & then - 원래 사용자로 조회
 		given()
 			.contentType(ContentType.JSON)
 			.queryParam("userId", userId)
@@ -372,38 +410,56 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 			.statusCode(HttpStatus.OK.value())
 			.body("code", is("SUCCESS"))
 			.body("message", is("요청이 성공했습니다."))
-			.body("data", notNullValue());
+			.body("data", notNullValue())
+			.body("data.findAll { it.name == '다른사용자카테고리' }.size()", is(0));
 	}
 
 	@Test
 	@DisplayName("카테고리 삭제 API - 다른 사용자의 카테고리 삭제 시 실패")
 	void deleteCategory_otherUserCategory_failure() {
-		// given
-		// 다른 사용자 생성
+		// given - 다른 사용자 생성
 		User otherUser = User.of();
 		User savedOtherUser = userRepository.save(otherUser);
 
 		// 다른 사용자의 카테고리 생성
-		Category otherCategory = Category.of(savedOtherUser.getId(), "다른사용자카테고리");
-		Category savedOtherCategory = categoryRepository.save(otherCategory);
+		RegisterCategoryRequest request = new RegisterCategoryRequest("다른사용자카테고리");
+		given()
+			.contentType(ContentType.JSON)
+			.queryParam("userId", savedOtherUser.getId())
+			.body(request)
+			.when()
+			.post("/api/categories");
 
-		// when & then - 원래 사용자로 다른 사용자의 카테고리 삭제 시도
+		// 생성된 카테고리 ID 조회
+		Category category = categoryRepository.findUserCategoriesByUserIdOrType(savedOtherUser.getId(), null)
+			.stream()
+			.filter(c -> "다른사용자카테고리".equals(c.getName()))
+			.findFirst()
+			.orElseThrow();
+
+		// when & then - 원래 사용자로 삭제 시도
 		given()
 			.contentType(ContentType.JSON)
 			.queryParam("userId", userId)
 			.when()
-			.delete("/api/categories/" + savedOtherCategory.getId())
+			.delete("/api/categories/" + category.getId())
 			.then()
 			.statusCode(HttpStatus.FORBIDDEN.value())
-			.body("code", is("FORBIDDEN"));
+			.body("code", is("FORBIDDEN"))
+			.body("message", is("접근 권한이 없습니다."))
+			.body("status", is(403))
+			.body("path", is("/api/categories/" + category.getId()))
+			.body("timestamp", notNullValue())
+			.body("errors", notNullValue())
+			.body("errors[0].field", is("category"))
+			.body("errors[0].reason", is("사용자가 수정이 불가능한 카테고리입니다."));
 	}
 
 	@Test
 	@DisplayName("카테고리 삭제 API - 기본 카테고리 ID 2~10 삭제 시 실패")
 	void deleteCategory_defaultCategories2to10_failure() {
-		// given - 기본 카테고리 ID 2~10
+		// given - 기본 카테고리 ID들 (마이그레이션에서 생성된 기본 카테고리들)
 		for (long categoryId = 2; categoryId <= 10; categoryId++) {
-			// when & then
 			given()
 				.contentType(ContentType.JSON)
 				.queryParam("userId", userId)
@@ -411,8 +467,14 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 				.delete("/api/categories/" + categoryId)
 				.then()
 				.statusCode(HttpStatus.FORBIDDEN.value())
-				.body("code", is("FORBIDDEN"));
+				.body("code", is("FORBIDDEN"))
+				.body("message", is("접근 권한이 없습니다."))
+				.body("status", is(403))
+				.body("path", is("/api/categories/" + categoryId))
+				.body("timestamp", notNullValue())
+				.body("errors", notNullValue())
+				.body("errors[0].field", is("category"))
+				.body("errors[0].reason", is("사용자가 수정이 불가능한 카테고리입니다."));
 		}
-
 	}
 }

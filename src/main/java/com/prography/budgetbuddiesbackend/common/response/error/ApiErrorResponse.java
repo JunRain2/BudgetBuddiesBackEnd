@@ -20,14 +20,13 @@ class ApiErrorResponse {
 	private final LocalDateTime timestamp;  // 에러 발생 시각
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	private List<ErrorDetail> errors;
+	private Object errors;
 
-	public static ApiErrorResponse of(String code, String message, int status, String path, LocalDateTime timestamp) {
-		return new ApiErrorResponse(code, message, status, path, timestamp, null);
+	public static ApiErrorResponse of(String code, String message, int status, String path) {
+		return of(code, message, status, path, null);
 	}
 
-	public static ApiErrorResponse of(String code, String message, int status, String path, LocalDateTime timestamp,
-		List<ErrorDetail> errors) {
-		return new ApiErrorResponse(code, message, status, path, timestamp, errors);
+	public static ApiErrorResponse of(String code, String message, int status, String path, Object errors) {
+		return new ApiErrorResponse(code, message, status, path, LocalDateTime.now(), errors);
 	}
 }

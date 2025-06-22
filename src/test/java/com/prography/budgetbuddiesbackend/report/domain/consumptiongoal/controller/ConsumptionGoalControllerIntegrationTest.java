@@ -110,7 +110,7 @@ class ConsumptionGoalControllerIntegrationTest extends AbstractControllerTest {
 			.when()
 			.get("/api/consumption-goals")
 			.then()
-			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			.statusCode(HttpStatus.BAD_REQUEST.value());
 	}
 
 	@Test
@@ -472,6 +472,6 @@ class ConsumptionGoalControllerIntegrationTest extends AbstractControllerTest {
 			.when()
 			.get("/api/consumption-goals")
 			.then()
-			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			.statusCode(HttpStatus.BAD_REQUEST.value());
 	}
 } 
