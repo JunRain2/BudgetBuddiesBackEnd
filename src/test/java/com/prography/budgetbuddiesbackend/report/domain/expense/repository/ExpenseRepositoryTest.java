@@ -14,6 +14,7 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.dto.SumAmountGroupByCategoryResult;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 @RepositoryTest
 class ExpenseRepositoryTest {
@@ -25,7 +26,7 @@ class ExpenseRepositoryTest {
 	@Test
 	void 카테고리별_월별_합계_정상_및_경계_테스트() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category catA = categoryRepository.save(Category.of(userId, "A"));
 		Category catB = categoryRepository.save(Category.of(userId, "B"));
 
@@ -56,7 +57,7 @@ class ExpenseRepositoryTest {
 		// when
 		YearMonth yearMonth = YearMonth.of(2024, 6);
 		List<SumAmountGroupByCategoryResult> list = expenseRepository.findSumAmountGroupedByCategoryIdAndUserIdAndYearMonth(
-			-1L, yearMonth.atDay(1), yearMonth.atEndOfMonth()
+			UserId.generate(), yearMonth.atDay(1), yearMonth.atEndOfMonth()
 		);
 
 		// then
@@ -66,7 +67,7 @@ class ExpenseRepositoryTest {
 	@Test
 	void 미래_월_조회시_빈_결과_반환() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category catA = categoryRepository.save(Category.of(userId, "A"));
 		expenseRepository.save(Expense.of(userId, catA, 1000, "A지출", LocalDate.now()));
 

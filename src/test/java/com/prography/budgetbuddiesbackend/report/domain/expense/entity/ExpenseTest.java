@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotRegisterExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotUpdateExpenseException;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 class ExpenseTest {
 
@@ -17,7 +18,7 @@ class ExpenseTest {
 	@DisplayName("userId로 지출을 생성할 수 있다")
 	void createExpenseWithUserId() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		Integer amount = 10000;
 		String description = "점심";
@@ -38,7 +39,7 @@ class ExpenseTest {
 	@DisplayName("미래 날짜로 지출을 생성하면 예외가 발생한다")
 	void createExpenseWithFutureDate_ThrowsException() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		LocalDate futureDate = LocalDate.now().plusDays(1);
 
@@ -51,7 +52,7 @@ class ExpenseTest {
 	@DisplayName("0원 이하 금액으로 지출을 생성하면 예외가 발생한다")
 	void createExpenseWithZeroAmount_ThrowsException() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 
 		// when & then
@@ -63,7 +64,7 @@ class ExpenseTest {
 	@DisplayName("지출을 수정할 수 있다")
 	void updateExpense() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category originalCategory = Category.of(userId, "식비");
 		Category newCategory = Category.of(userId, "교통");
 		Expense expense = Expense.of(userId, originalCategory, 10000, "점심", LocalDate.now().minusDays(1));
@@ -81,7 +82,7 @@ class ExpenseTest {
 	@DisplayName("지출 소유자 검증이 성공한다")
 	void validateOwner_Success() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		Expense expense = Expense.of(userId, category, 10000, "점심", LocalDate.now().minusDays(1));
 
@@ -94,8 +95,8 @@ class ExpenseTest {
 	@DisplayName("다른 사용자가 지출을 수정하려고 하면 예외가 발생한다")
 	void validateOwner_OtherUser_ThrowsException() {
 		// given
-		Long ownerId = 1L;
-		Long otherUserId = 2L;
+		UserId ownerId = UserId.generate();
+		UserId otherUserId = UserId.generate();
 		Category category = Category.of(ownerId, "식비");
 		Expense expense = Expense.of(ownerId, category, 10000, "점심", LocalDate.now().minusDays(1));
 
@@ -108,7 +109,7 @@ class ExpenseTest {
 	@DisplayName("지출 수정 가능 여부 검증이 성공한다")
 	void validateModifiable_Success() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		Expense expense = Expense.of(userId, category, 10000, "점심", LocalDate.now().minusDays(1));
 		LocalDate pastDate = LocalDate.now().minusDays(2);
@@ -122,7 +123,7 @@ class ExpenseTest {
 	@DisplayName("미래 날짜로 지출을 수정하려고 하면 예외가 발생한다")
 	void validateModifiable_FutureDate_ThrowsException() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		Expense expense = Expense.of(userId, category, 10000, "점심", LocalDate.now().minusDays(1));
 		LocalDate futureDate = LocalDate.now().plusDays(1);

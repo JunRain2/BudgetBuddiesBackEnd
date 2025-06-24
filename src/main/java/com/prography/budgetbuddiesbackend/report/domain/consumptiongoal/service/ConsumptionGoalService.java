@@ -1,8 +1,10 @@
 package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service;
 
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoalId;
 import com.prography.budgetbuddiesbackend.user.entity.UserId;
 import java.time.YearMonth;
+import java.util.Collection;
 import java.util.List;
 
 public interface ConsumptionGoalService {
@@ -24,4 +26,6 @@ public interface ConsumptionGoalService {
    * @return 소비 목표 목록
    */
   List<ConsumptionGoal> getByUserAndYearMonth(UserId userId, YearMonth yearMonth);
+
+  List<ConsumptionGoal> getByIds(Collection<ConsumptionGoalId> ids);
 }

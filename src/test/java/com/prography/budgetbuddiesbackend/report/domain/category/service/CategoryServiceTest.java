@@ -20,6 +20,7 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.DuplicateCategoryNameException;
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.NotFoundCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
@@ -29,12 +30,12 @@ class CategoryServiceTest {
 	@Mock
 	private CategoryRepository categoryRepository;
 
-	private Long userId;
+	private UserId userId;
 	private Category category;
 
 	@BeforeEach
 	void setUp() {
-		userId = 1L;
+		userId = UserId.generate();
 		category = Category.of(userId, "식비");
 	}
 
@@ -84,26 +85,26 @@ class CategoryServiceTest {
 	@DisplayName("ID로 카테고리를 조회한다")
 	void findById_정상동작() {
 		// given
-		when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+		when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
 
 		// when
-		Category foundCategory = categoryService.findById(1L);
+		Category foundCategory = categoryService.findById(category.getId());
 
 		// then
 		assertThat(foundCategory).isEqualTo(category);
-		verify(categoryRepository).findById(1L);
+		verify(categoryRepository).findById(category.getId());
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 ID로 조회시 예외가 발생한다")
 	void findById_없으면_예외() {
 		// given
-		when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+		when(categoryRepository.findById(category.getId())).thenReturn(Optional.empty());
 
 		// when & then
-		assertThatThrownBy(() -> categoryService.findById(1L))
+		assertThatThrownBy(() -> categoryService.findById(category.getId()))
 			.isInstanceOf(NotFoundCategoryException.class);
-		verify(categoryRepository).findById(1L);
+		verify(categoryRepository).findById(category.getId());
 	}
 
 	@Test

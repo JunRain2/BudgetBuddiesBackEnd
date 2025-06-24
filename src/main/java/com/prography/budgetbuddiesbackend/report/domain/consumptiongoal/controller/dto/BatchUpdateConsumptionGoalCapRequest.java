@@ -11,7 +11,7 @@ import java.util.UUID;
 public record BatchUpdateConsumptionGoalCapRequest(
     @NotEmpty @Valid @Size(min = 1) List<GoalCapUpdate> goals) {
 
-  public record GoalCapUpdate(@NotNull UUID categoryId,
+  public record GoalCapUpdate(@NotNull UUID consumptionGoalId,
                               @NotNull @Min(value = 1, message = "소비 금액은 1원 이상이어야 합니다.") Integer cap) {
 
   }

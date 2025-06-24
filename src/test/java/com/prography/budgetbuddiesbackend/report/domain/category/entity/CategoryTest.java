@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.UnmodifiableCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 class CategoryTest {
 
@@ -16,7 +17,7 @@ class CategoryTest {
 	@DisplayName("userId로 카테고리를 생성할 수 있다")
 	void createCategoryWithUserId() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		String name = "식비";
 
 		// when
@@ -32,7 +33,7 @@ class CategoryTest {
 	@DisplayName("카테고리 소유자 검증이 성공한다")
 	void validateModifiable_Success() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 
 		// when & then
@@ -44,8 +45,8 @@ class CategoryTest {
 	@DisplayName("다른 사용자가 카테고리를 수정하려고 하면 예외가 발생한다")
 	void validateModifiable_OtherUser_ThrowsException() {
 		// given
-		Long ownerId = 1L;
-		Long otherUserId = 2L;
+		UserId ownerId = UserId.generate();
+		UserId otherUserId = UserId.generate();
 		Category category = Category.of(ownerId, "식비");
 
 		// when & then
@@ -57,7 +58,7 @@ class CategoryTest {
 	@DisplayName("기본 카테고리는 수정할 수 없다")
 	void validateModifiable_DefaultCategory_ThrowsException() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "기본카테고리");
 		// 기본 카테고리로 설정 (리플렉션 사용)
 		try {
@@ -77,7 +78,7 @@ class CategoryTest {
 	@DisplayName("초기 소비 목표를 생성할 수 있다")
 	void createInitialGoal() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		YearMonth yearMonth = YearMonth.of(2024, 6);
 

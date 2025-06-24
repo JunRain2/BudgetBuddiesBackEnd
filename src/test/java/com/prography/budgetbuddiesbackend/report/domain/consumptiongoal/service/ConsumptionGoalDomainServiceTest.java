@@ -18,6 +18,7 @@ import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.exception.NotFoundConsumptionGoalException;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 @ExtendWith(MockitoExtension.class)
 class ConsumptionGoalDomainServiceTest {
@@ -27,13 +28,13 @@ class ConsumptionGoalDomainServiceTest {
 	@Mock
 	private ConsumptionGoalRepository consumptionGoalRepository;
 
-	private Long userId;
+	private UserId userId;
 	private Category category;
 	private ConsumptionGoal consumptionGoal;
 
 	@BeforeEach
 	void setUp() {
-		userId = 1L;
+		userId = UserId.generate();
 		category = Category.of(userId, "식비");
 		consumptionGoal = ConsumptionGoal.of(userId, category, 100000, YearMonth.now());
 	}

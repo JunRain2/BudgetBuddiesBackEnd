@@ -12,6 +12,7 @@ import com.prography.budgetbuddiesbackend.common.RepositoryTest;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 @RepositoryTest
 class ConsumptionGoalRepositoryTest {
@@ -23,7 +24,7 @@ class ConsumptionGoalRepositoryTest {
 	@Test
 	void 사용자와_연월로_소비목표_정상_조회() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = categoryRepository.save(Category.of(userId, "식비"));
 		YearMonth month = YearMonth.of(2024, 6);
 
@@ -42,7 +43,7 @@ class ConsumptionGoalRepositoryTest {
 	@Test
 	void 삭제된_소비목표는_조회되지_않음() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = categoryRepository.save(Category.of(userId, "교통"));
 		YearMonth month = YearMonth.of(2024, 6);
 
@@ -60,7 +61,7 @@ class ConsumptionGoalRepositoryTest {
 	@Test
 	void 여러_id로_소비목표_일괄_조회() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category1 = categoryRepository.save(Category.of(userId, "식비"));
 		Category category2 = categoryRepository.save(Category.of(userId, "교통"));
 		YearMonth month = YearMonth.of(2024, 6);

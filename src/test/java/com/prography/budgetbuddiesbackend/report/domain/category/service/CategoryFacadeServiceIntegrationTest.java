@@ -19,6 +19,8 @@ import com.prography.budgetbuddiesbackend.report.domain.category.repository.Cate
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
+import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryId;
 
 @ServiceIntegrationTest
 class CategoryFacadeServiceIntegrationTest {
@@ -34,14 +36,14 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 카테고리_정상_생성_및_소비목표_자동생성() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		RegisterCategoryRequest req = new RegisterCategoryRequest("식비");
 		// when
 		categoryFacadeService.registerCategory(req, userId);
 		List<UserCategoryResponse> categories = categoryFacadeService.getUserCategories(userId);
 		// then
 		UserCategoryResponse 식비카테고리 = categories.stream().filter(c -> c.name().equals("식비")).findFirst().orElseThrow();
-		Category categoryEntity = categoryRepository.findById(식비카테고리.categoryId()).orElseThrow();
+		Category categoryEntity = categoryRepository.findById(CategoryId.of(식비카테고리.categoryId())).orElseThrow();
 		assertThat(식비카테고리.name()).isEqualTo("식비");
 		assertThat(consumptionGoalRepository.findByCategory(categoryEntity)
 			.stream()
@@ -51,7 +53,7 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 동일_이름_중복_생성시_예외() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		RegisterCategoryRequest req = new RegisterCategoryRequest("교통");
 		categoryFacadeService.registerCategory(req, userId);
 		// when & then
@@ -62,7 +64,7 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 기본_카테고리_삭제시_예외() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category 기본카테고리 = categoryRepository.findUserCategoriesByUserIdOrType(null, CategoryType.DEFAULT).get(0);
 		// when & then
 		assertThatThrownBy(() -> categoryFacadeService.deleteCategory(기본카테고리.getId(), userId)).isInstanceOf(
@@ -72,7 +74,8 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 커스텀_카테고리_삭제시_소비내역_uncategorized_이동_및_목표_삭제() {
 		// given
-		Long userId = 1L;
+		Category uncategorized = categoryRepository.findByName("카테고리 없음").orElseThrow();
+		UserId userId = UserId.generate();
 		RegisterCategoryRequest req = new RegisterCategoryRequest("여행");
 		categoryFacadeService.registerCategory(req, userId);
 		Category category = categoryRepository.findAll()
@@ -84,15 +87,15 @@ class CategoryFacadeServiceIntegrationTest {
 		// when
 		categoryFacadeService.deleteCategory(category.getId(), userId);
 		// then
-		Expense updated = expenseRepository.findById(expense.getId()).get();
-		assertThat(updated.getCategory().getId()).isEqualTo(1L);
+		Expense updated = expenseRepository.findById(expense.getExpenseId()).get();
+		assertThat(updated.getCategory().getId().getId()).isEqualTo(uncategorized.getId().getId());
 		assertThat(consumptionGoalRepository.findByCategory(category)).isEmpty();
 	}
 
 	@Test
 	void 카테고리_이름이_1자일_때_정상_생성() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		RegisterCategoryRequest req = new RegisterCategoryRequest("가");
 		// when
 		categoryFacadeService.registerCategory(req, userId);
@@ -104,7 +107,7 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 카테고리_이름이_20자일_때_정상_생성() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		RegisterCategoryRequest req = new RegisterCategoryRequest("가".repeat(20));
 		// when
 		categoryFacadeService.registerCategory(req, userId);
@@ -116,7 +119,7 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 카테고리_이름이_21자일_때_생성_실패() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		RegisterCategoryRequest req = new RegisterCategoryRequest("가".repeat(21));
 		// when & then
 		assertThatThrownBy(() -> categoryFacadeService.registerCategory(req, userId))
@@ -126,7 +129,7 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 카테고리_이름이_빈문자열일_때_생성_실패() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		RegisterCategoryRequest req = new RegisterCategoryRequest("");
 		// when & then
 		assertThatThrownBy(() -> categoryFacadeService.registerCategory(req, userId))
@@ -136,9 +139,9 @@ class CategoryFacadeServiceIntegrationTest {
 	@Test
 	void 존재하지_않는_카테고리_삭제시_예외() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		// when & then
-		assertThatThrownBy(() -> categoryFacadeService.deleteCategory(-1L, userId))
+		assertThatThrownBy(() -> categoryFacadeService.deleteCategory(CategoryId.of(java.util.UUID.randomUUID()), userId))
 			.isInstanceOf(Exception.class);
 	}
 } 

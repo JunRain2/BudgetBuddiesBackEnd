@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 class ConsumptionGoalTest {
 
@@ -15,7 +16,7 @@ class ConsumptionGoalTest {
 	@DisplayName("userId로 소비 목표를 생성할 수 있다")
 	void createConsumptionGoalWithUserId() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		Integer cap = 100000;
 		YearMonth yearMonth = YearMonth.of(2024, 6);
@@ -34,7 +35,7 @@ class ConsumptionGoalTest {
 	@DisplayName("소비 목표의 한도를 변경할 수 있다")
 	void setCap() {
 		// given
-		Long userId = 1L;
+		UserId userId = UserId.generate();
 		Category category = Category.of(userId, "식비");
 		ConsumptionGoal goal = ConsumptionGoal.of(userId, category, 100000, YearMonth.of(2024, 6));
 		Integer newCap = 150000;

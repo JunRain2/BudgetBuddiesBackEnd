@@ -14,8 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
+import com.prography.budgetbuddiesbackend.report.domain.expense.entity.ExpenseId;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotFoundExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.repository.ExpenseRepository;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 @ExtendWith(MockitoExtension.class)
 class ExpenseDomainServiceTest {
@@ -25,15 +27,17 @@ class ExpenseDomainServiceTest {
 	@Mock
 	private ExpenseRepository expenseRepository;
 
-	private Long userId;
+	private UserId userId;
 	private Category category;
 	private Expense expense;
+	private ExpenseId expenseId;
 
 	@BeforeEach
 	void setUp() {
-		userId = 1L;
+		userId = UserId.generate();
 		category = Category.of(userId, "식비");
 		expense = Expense.of(userId, category, 10000, "점심", LocalDate.now());
+		expenseId = expense.getExpenseId();
 	}
 
 	@Test
@@ -67,25 +71,25 @@ class ExpenseDomainServiceTest {
 	@DisplayName("ID로 지출을 조회한다")
 	void findById_정상동작() {
 		// given
-		when(expenseService.findById(1L)).thenReturn(expense);
+		when(expenseService.findById(expenseId)).thenReturn(expense);
 
 		// when
-		Expense foundExpense = expenseService.findById(1L);
+		Expense foundExpense = expenseService.findById(expenseId);
 
 		// then
 		assertThat(foundExpense).isEqualTo(expense);
-		verify(expenseService).findById(1L);
+		verify(expenseService).findById(expenseId);
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 ID로 조회시 예외가 발생한다")
 	void findById_없으면_예외() {
 		// given
-		when(expenseService.findById(1L)).thenThrow(NotFoundExpenseException.class);
+		when(expenseService.findById(expenseId)).thenThrow(NotFoundExpenseException.class);
 
 		// when & then
-		assertThatThrownBy(() -> expenseService.findById(1L))
+		assertThatThrownBy(() -> expenseService.findById(expenseId))
 			.isInstanceOf(NotFoundExpenseException.class);
-		verify(expenseService).findById(1L);
+		verify(expenseService).findById(expenseId);
 	}
 } 
