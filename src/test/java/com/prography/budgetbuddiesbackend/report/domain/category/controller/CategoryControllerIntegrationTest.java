@@ -40,7 +40,7 @@ class CategoryControllerIntegrationTest extends AbstractControllerTest {
 		// 테스트용 User 생성
 		User user = User.of();
 		User savedUser = userRepository.save(user);
-		userId = savedUser.getId();
+		// userId = savedUser.getId();
 	}
 
 	@Test

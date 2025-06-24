@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
+import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryId;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryType;
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.DuplicateCategoryNameException;
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.NotFoundCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.category.repository.CategoryRepository;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 	}
 
-	private Set<String> findCategoryNamesByUser(Long userId) {
+	private Set<String> findCategoryNamesByUser(UserId userId) {
 		return categoryRepository.findAllCategoryNamesByUserIdOrType(userId, CategoryType.DEFAULT);
 	}
 
@@ -40,11 +42,11 @@ public class CategoryServiceImpl implements CategoryService {
 		categoryRepository.delete(category);
 	}
 
-	public Category findById(Long id) {
+	public Category findById(CategoryId id) {
 		return categoryRepository.findById(id).orElseThrow(NotFoundCategoryException::new);
 	}
 
-	public List<Category> findUserCategories(Long userId) {
+	public List<Category> findUserCategories(UserId userId) {
 		return categoryRepository.findUserCategoriesByUserIdOrType(userId, CategoryType.DEFAULT);
 	}
 

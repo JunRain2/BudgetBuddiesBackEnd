@@ -5,13 +5,14 @@ import java.time.YearMonth;
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.exception.NotUpdateConsumptionGoalException;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -25,14 +26,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "consumption_goal", schema = "budgetbuddies")
 public class ConsumptionGoal extends BaseEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false)
-	private Long id;
+	@EmbeddedId
+	private ConsumptionGoalId id;
 
+	@Embedded
 	@NotNull
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	@AttributeOverride(name = "id", column = @Column(name = "user_id", nullable = false))
+	private UserId userId;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -47,18 +47,25 @@ public class ConsumptionGoal extends BaseEntity {
 	@Column(name = "goal_month", nullable = false, columnDefinition = "CHAR(7)")
 	private YearMonth goalMonth;
 
-	private ConsumptionGoal(Long userId, Category category, Integer cap, YearMonth goalMonth) {
+	private ConsumptionGoal(
+		ConsumptionGoalId consumptionGoalId,
+		UserId userId,
+		Category category,
+		Integer cap,
+		YearMonth goalMonth) {
+
+		this.id = consumptionGoalId;
 		this.userId = userId;
 		this.category = category;
 		this.cap = cap;
 		this.goalMonth = goalMonth;
 	}
 
-	public static ConsumptionGoal of(Long userId, Category category, Integer cap, YearMonth yearMonth) {
-		return new ConsumptionGoal(userId, category, cap, yearMonth);
+	public static ConsumptionGoal of(UserId userId, Category category, Integer cap, YearMonth yearMonth) {
+		return new ConsumptionGoal(ConsumptionGoalId.generate(), userId, category, cap, yearMonth);
 	}
 
-	public void canUpdate(Long userId) {
+	public void canUpdate(UserId userId) {
 		if (!this.userId.equals(userId)) {
 			throw new NotUpdateConsumptionGoalException();
 		}

@@ -153,10 +153,10 @@ class ConsumptionGoalServiceIntegrationTest {
 		);
 
 		// when
-		consumptionGoalService.batchUpdateCap(userId, request);
+		consumptionGoalService.batchUpdateCapForThisMonth(userId, request);
 
 		// then
-		List<ConsumptionGoal> updatedGoals = consumptionGoalDomainService.findAllByIdList(List.of(goal1.getId(), goal2.getId()));
+		List<ConsumptionGoal> updatedGoals = consumptionGoalDomainService.findCurrentMonthConsumptionGoalByUserId(List.of(goal1.getId(), goal2.getId()));
 		assertThat(updatedGoals).extracting("cap").containsExactlyInAnyOrder(15000, 25000);
 	}
 }

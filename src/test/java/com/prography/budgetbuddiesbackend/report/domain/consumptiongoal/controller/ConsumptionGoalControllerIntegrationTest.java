@@ -474,4 +474,4 @@ class ConsumptionGoalControllerIntegrationTest extends AbstractControllerTest {
 			.then()
 			.statusCode(HttpStatus.BAD_REQUEST.value());
 	}
-} 
+}

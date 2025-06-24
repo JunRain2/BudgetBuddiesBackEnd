@@ -1,13 +1,14 @@
 package com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request;
 
-import java.time.LocalDate;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import java.time.LocalDate;
+import java.util.UUID;
 
 public record UpdateExpenseRequest(
-	@NotNull Long expenseId,
-	@NotNull Long categoryId,
-	@NotNull @PastOrPresent LocalDate expenseAt
+    @NotNull UUID expenseId,
+    @NotNull UUID categoryId,
+    @NotNull @PastOrPresent LocalDate expenseAt
 ) {
+
 }

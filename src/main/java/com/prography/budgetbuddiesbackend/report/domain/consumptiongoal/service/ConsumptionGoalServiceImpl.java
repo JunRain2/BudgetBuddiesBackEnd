@@ -1,40 +1,33 @@
 package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service;
 
-import java.time.YearMonth;
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.exception.NotFoundConsumptionGoalException;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
-
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
+import java.time.YearMonth;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ConsumptionGoalServiceImpl implements ConsumptionGoalService {
-	private final ConsumptionGoalRepository consumptionGoalRepository;
 
-	@Override
-	public ConsumptionGoal save(ConsumptionGoal goal) {
-		return consumptionGoalRepository.save(goal);
-	}
+  private final ConsumptionGoalRepository consumptionGoalRepository;
 
-	@Override
-	public List<ConsumptionGoal> getByUserAndYearMonth(Long userId, YearMonth yearMonth) {
-		if (yearMonth.isAfter(YearMonth.now())) {
-			throw new NotFoundConsumptionGoalException();
-		}
+  @Override
+  public ConsumptionGoal save(ConsumptionGoal goal) {
+    return consumptionGoalRepository.save(goal);
+  }
 
-		return consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, yearMonth);
-	}
+  @Override
+  public List<ConsumptionGoal> getByUserAndYearMonth(UserId userId, YearMonth yearMonth) {
+    if (yearMonth.isAfter(YearMonth.now())) {
+      throw new NotFoundConsumptionGoalException();
+    }
 
-	@Override
-	public List<ConsumptionGoal> findAllByIdList(Collection<Long> idList) {
-		return consumptionGoalRepository.findAllById(idList);
-	}
+    return consumptionGoalRepository.findByUserIdAndGoalMonthWithCategory(userId, yearMonth);
+  }
 }

@@ -6,13 +6,14 @@ import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 import com.prography.budgetbuddiesbackend.report.domain.category.entity.Category;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotRegisterExpenseException;
 import com.prography.budgetbuddiesbackend.report.domain.expense.exception.NotUpdateExpenseException;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -27,14 +28,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "expense", schema = "budgetbuddies")
 public class Expense extends BaseEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false)
-	private Long id;
 
+	@EmbeddedId
+	private ExpenseId expenseId;
+
+	@Embedded
 	@NotNull
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	@AttributeOverride(name = "id", column = @Column(name = "user_id", nullable = false))
+	private UserId userId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
@@ -53,7 +54,9 @@ public class Expense extends BaseEntity {
 	@Column(name = "expense_at", nullable = false)
 	private LocalDate expenseAt;
 
-	private Expense(Long userId, Category category, Integer amount, String description, LocalDate expenseAt) {
+	private Expense(ExpenseId expenseId, UserId userId, Category category, Integer amount, String description,
+		LocalDate expenseAt) {
+		this.expenseId = expenseId;
 		this.userId = userId;
 		this.category = category;
 		this.amount = amount;
@@ -61,13 +64,13 @@ public class Expense extends BaseEntity {
 		this.expenseAt = expenseAt;
 	}
 
-	public static Expense of(Long userId, Category category, Integer amount, String description, LocalDate expenseAt) {
+	public static Expense of(UserId userId, Category category, Integer amount, String description, LocalDate expenseAt) {
 		LocalDate now = LocalDate.now();
 		if (now.isBefore(expenseAt) || amount <= 0) {
 			throw new NotRegisterExpenseException();
 		}
 
-		return new Expense(userId, category, amount, description, expenseAt);
+		return new Expense(ExpenseId.generate(), userId, category, amount, description, expenseAt);
 	}
 
 	public void update(Category category, LocalDate expenseAt) {
@@ -75,13 +78,13 @@ public class Expense extends BaseEntity {
 		this.expenseAt = expenseAt;
 	}
 
-	public void validateOwner(Long userId) {
+	public void validateOwner(UserId userId) {
 		if (!this.userId.equals(userId)) {
 			throw new NotUpdateExpenseException();
 		}
 	}
 
-	public void validateModifiable(Long userId, LocalDate expenseAt) {
+	public void validateModifiable(UserId userId, LocalDate expenseAt) {
 		validateOwner(userId);
 
 		LocalDate now = LocalDate.now();

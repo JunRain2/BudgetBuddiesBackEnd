@@ -1,6 +1,7 @@
 package com.prography.budgetbuddiesbackend.report.domain.expense.service;
 
 import com.prography.budgetbuddiesbackend.report.domain.expense.entity.Expense;
+import com.prography.budgetbuddiesbackend.report.domain.expense.entity.ExpenseId;
 
 public interface ExpenseService {
 	/**
@@ -22,6 +23,6 @@ public interface ExpenseService {
 	 * @return 조회된 지출
 	 * @throws NotFoundExpenseException 지출이 존재하지 않는 경우
 	 */
-	Expense findById(Long id);
+	Expense findById(ExpenseId id);
 }
 

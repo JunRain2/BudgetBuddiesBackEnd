@@ -1,12 +1,15 @@
 package com.prography.budgetbuddiesbackend.report.domain.expense.service;
 
-import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.RegisterExpenseRequest;
-import com.prography.budgetbuddiesbackend.report.domain.expense.controller.dto.request.UpdateExpenseRequest;
+import com.prography.budgetbuddiesbackend.report.domain.expense.entity.ExpenseId;
+import com.prography.budgetbuddiesbackend.report.domain.expense.service.command.RegisterExpenseCommand;
+import com.prography.budgetbuddiesbackend.report.domain.expense.service.command.UpdateExpenseCommand;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
 public interface ExpenseUseCase {
-	void registerExpense(RegisterExpenseRequest request, Long userId);
 
-	void updateExpense(UpdateExpenseRequest request, Long userId);
+    void registerExpense(RegisterExpenseCommand command, UserId userId);
 
-	void deleteExpense(Long expenseId, Long userId);
+    void updateExpense(UpdateExpenseCommand command, UserId userId);
+
+    void deleteExpense(ExpenseId expenseId, UserId userId);
 }

@@ -1,58 +1,64 @@
 package com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service;
 
+import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryId;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto.UserConsumptionGoalResponse;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
+import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.service.command.BatchUpdateCapCommand;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto.BatchUpdateConsumptionGoalCapRequest;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.controller.dto.UserConsumptionGoalResponse;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
-import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.repository.ConsumptionGoalRepository;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ConsumptionGoalFacadeService implements ConsumptionGoalUseCase {
-	private final ConsumptionGoalService consumptionGoalService;
-	private final ConsumptionGoalMapper mapper;
 
-	private final ConsumptionGoalExpenseService expenseService;
-	private final ConsumptionGoalRepository consumptionGoalRepository;
+  private final ConsumptionGoalService consumptionGoalService;
+  private final ConsumptionGoalMapper mapper;
 
-	@Override
-	public List<UserConsumptionGoalResponse> getUserConsumptionGoalsByMonth(Long userId, YearMonth yearMonth) {
-		List<ConsumptionGoal> goals = consumptionGoalService.getByUserAndYearMonth(userId, yearMonth);
-		Map<Long, Integer> totalSpentByCategory = expenseService.getTotalSpentByUserCategory(userId, yearMonth);
+  private final ConsumptionGoalExpenseService expenseService;
 
-		return goals.stream().map(goal -> mergeWithSpending(goal, totalSpentByCategory)).toList();
-	}
+  @Override
+  public List<UserConsumptionGoalResponse> getUserConsumptionGoalsByMonth(UserId userId,
+      YearMonth yearMonth) {
 
-	private UserConsumptionGoalResponse mergeWithSpending(ConsumptionGoal goal, Map<Long, Integer> spendingMap) {
-		Long categoryId = goal.getCategory().getId();
-		int usedAmount = spendingMap.getOrDefault(categoryId, 0);
+    List<ConsumptionGoal> goals = consumptionGoalService.getByUserAndYearMonth(userId, yearMonth);
+    Map<CategoryId, Integer> totalSpentByCategory = expenseService.getTotalSpentByUserCategory(
+        userId, yearMonth);
 
-		return mapper.entityToUserConsumptionGoalResponse(goal, usedAmount);
-	}
+    return goals.stream().map(goal -> mergeWithSpending(goal, totalSpentByCategory)).toList();
+  }
 
-	@Override
-	public void batchUpdateCap(Long userId, BatchUpdateConsumptionGoalCapRequest request) {
-		Map<Long, BatchUpdateConsumptionGoalCapRequest.GoalCapUpdate> requestMap = request.goals()
-			.stream()
-			.collect(
-				Collectors.toMap(BatchUpdateConsumptionGoalCapRequest.GoalCapUpdate::consumptionGoalId, req -> req));
+  private UserConsumptionGoalResponse mergeWithSpending(ConsumptionGoal goal,
+      Map<CategoryId, Integer> spendingMap) {
 
-		List<ConsumptionGoal> consumptionGoals = consumptionGoalService.findAllByIdList(requestMap.keySet());
+    CategoryId categoryId = goal.getCategory().getId();
+    int usedAmount = spendingMap.getOrDefault(categoryId, 0);
 
-		for (ConsumptionGoal consumptionGoal : consumptionGoals) {
-			int cap = requestMap.get(consumptionGoal.getId()).cap();
-			consumptionGoal.canUpdate(userId);
-			consumptionGoal.update(cap);
-		}
-	}
+    return mapper.entityToUserConsumptionGoalResponse(goal, usedAmount);
+  }
+
+  @Override
+  public void batchUpdateCapForThisMonth(UserId userId, BatchUpdateCapCommand command) {
+
+    YearMonth now = YearMonth.now();
+    List<ConsumptionGoal> consumptionGoals = consumptionGoalService.getByUserAndYearMonth(userId,
+        now);
+
+    Map<CategoryId, BatchUpdateCapCommand.UpdateCapCommand> requestMap = command.capCommandList()
+        .stream()
+        .collect(Collectors.toMap(BatchUpdateCapCommand.UpdateCapCommand::categoryId, req -> req));
+
+    consumptionGoals.stream().filter(goal -> requestMap.containsKey(goal.getCategory().getId()))
+        .forEach(goal -> {
+          int cap = requestMap.get(goal.getCategory().getId()).cap();
+          goal.canUpdate(userId);
+          goal.update(cap);
+        });
+  }
 }

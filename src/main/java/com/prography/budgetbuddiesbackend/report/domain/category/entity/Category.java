@@ -7,14 +7,15 @@ import java.time.YearMonth;
 import com.prography.budgetbuddiesbackend.common.entity.BaseEntity;
 import com.prography.budgetbuddiesbackend.report.domain.category.exception.UnmodifiableCategoryException;
 import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.ConsumptionGoal;
+import com.prography.budgetbuddiesbackend.user.entity.UserId;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,14 +28,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "category", schema = "budgetbuddies")
 public class Category extends BaseEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false)
-	private Long id;
+	@EmbeddedId
+	private CategoryId id;
 
+	@Embedded
 	@NotNull
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	@AttributeOverride(name = "id", column = @Column(name = "user_id", nullable = false))
+	private UserId userId;
 
 	@NotNull
 	@Column(name = "type", nullable = false)
@@ -46,14 +46,15 @@ public class Category extends BaseEntity {
 	@Column(name = "name", nullable = false, length = 20)
 	private String name;
 
-	private Category(Long userId, String name) {
+	private Category(CategoryId id, UserId userId, String name) {
+		this.id = id;
 		this.userId = userId;
 		this.name = name;
 		this.type = CategoryType.CUSTOM;
 	}
 
-	public static Category of(Long userId, String name) {
-		return new Category(userId, name);
+	public static Category of(UserId userId, String name) {
+		return new Category(CategoryId.generate(), userId, name);
 	}
 
 	public ConsumptionGoal createInitialGoal(YearMonth yearMonth) {
@@ -61,7 +62,7 @@ public class Category extends BaseEntity {
 		return ConsumptionGoal.of(this.userId, this, initialCap, yearMonth);
 	}
 
-	public void validateModifiable(Long userId) {
+	public void validateModifiable(UserId userId) {
 		if (DEFAULT.equals(this.type) || !userId.equals(this.userId)) {
 			throw new UnmodifiableCategoryException();
 		}

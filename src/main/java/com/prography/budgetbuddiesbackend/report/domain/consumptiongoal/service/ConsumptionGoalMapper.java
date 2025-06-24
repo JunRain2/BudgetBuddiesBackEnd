@@ -9,8 +9,9 @@ import com.prography.budgetbuddiesbackend.report.domain.consumptiongoal.entity.C
 public class ConsumptionGoalMapper {
 	public UserConsumptionGoalResponse entityToUserConsumptionGoalResponse(ConsumptionGoal consumptionGoal,
 		Integer totalSpent) {
+
 		return new UserConsumptionGoalResponse(
-			consumptionGoal.getId(),
+			consumptionGoal.getId().getId(),
 			consumptionGoal.getCategory().getName(),
 			consumptionGoal.getCap(),
 			totalSpent

@@ -1,7 +1,9 @@
 package com.prography.budgetbuddiesbackend.report.domain.expense.repository.dto;
 
+import com.prography.budgetbuddiesbackend.report.domain.category.entity.CategoryId;
+
 public record SumAmountGroupByCategoryResult(
-	Long categoryId,
+	CategoryId categoryId,
 	Integer spendingMoney
 ) {
 }

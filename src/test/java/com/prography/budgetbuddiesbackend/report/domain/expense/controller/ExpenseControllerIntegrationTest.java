@@ -905,4 +905,4 @@ class ExpenseControllerIntegrationTest extends AbstractControllerTest {
 			.statusCode(HttpStatus.NOT_FOUND.value())
 			.body("code", is("NOT_FOUND"));
 	}
-} 
+}
